@@ -1628,37 +1628,6 @@ body.dark-theme #compare-container .compare-params .param-row {
 }
 #ai-panel-header .ai-actions button:hover { background: rgba(0,212,255,0.15); color: #00d4ff; }
 
-#ai-tabs {
-  display: flex; flex-shrink: 0;
-  border-bottom: 1px solid rgba(0,212,255,0.1);
-}
-#ai-tabs .ai-tab {
-  flex: 1; padding: 10px 0; text-align: center; cursor: pointer;
-  color: #667799; font-size: 0.82rem; font-weight: 600;
-  border-bottom: 2px solid transparent; transition: 0.2s;
-  background: none; border-top: none; border-left: none; border-right: none;
-  font-family: inherit;
-}
-#ai-tabs .ai-tab.active {
-  color: #00d4ff;
-  border-bottom-color: #00d4ff;
-}
-
-#ai-modes {
-  display: flex; flex-shrink: 0; gap: 6px;
-  padding: 8px 12px; background: rgba(0,20,50,0.4);
-  border-bottom: 1px solid rgba(0,212,255,0.1);
-  flex-wrap: wrap;
-}
-#ai-modes .ai-mode-btn {
-  padding: 5px 10px; border-radius: 14px; font-size: 0.72rem;
-  border: 1px solid rgba(0,212,255,0.25);
-  background: rgba(0,212,255,0.06); color: #aabbcc; cursor: pointer;
-  transition: 0.2s; white-space: nowrap; font-family: inherit;
-}
-#ai-modes .ai-mode-btn:hover,
-#ai-modes .ai-mode-btn.active { background: rgba(0,212,255,0.2); color: #00d4ff; border-color: rgba(0,212,255,0.5); }
-
 #ai-messages {
   flex: 1; overflow-y: auto; padding: 12px;
   display: flex; flex-direction: column; gap: 10px;
@@ -1931,16 +1900,6 @@ body.dark-theme #compare-container .compare-params .param-row {
         <button onclick="AIAssistant.minimize()" title="最小化">─</button>
         <button onclick="AIAssistant.close()" title="关闭">✕</button>
       </div>
-    </div>
-    <div id="ai-tabs">
-      <button class="ai-tab active" data-tab="principle" onclick="AIAssistant.switchTab('principle')">实验原理</button>
-      <button class="ai-tab" data-tab="simulation" onclick="AIAssistant.switchTab('simulation')">模拟仿真</button>
-    </div>
-    <div id="ai-modes">
-      <button class="ai-mode-btn active" data-mode="chat" onclick="AIAssistant.handleMode('chat')">💬 对话</button>
-      <button class="ai-mode-btn" data-mode="principle" onclick="AIAssistant.handleMode('principle')">🔍 原理</button>
-      <button class="ai-mode-btn" data-mode="formula" onclick="AIAssistant.handleMode('formula')">📐 公式</button>
-      <button class="ai-mode-btn" data-mode="guide" onclick="AIAssistant.handleMode('guide')">⚙️ 指导</button>
     </div>
     <div id="ai-messages">
       <div class="ai-msg assistant">
@@ -9125,8 +9084,6 @@ var AIKnowledgeBase = [
 var AIAssistant = {
   isOpen: false,
   isMinimized: false,
-  currentTab: 'principle',
-  currentMode: 'chat',
   conversationHistory: [],
   lastQueryType: null,
 
@@ -9572,27 +9529,8 @@ var AIAssistant = {
     if (panel) { panel.classList.remove('open'); panel.classList.add('minimized'); }
   },
 
-  switchTab: function(tab) {
-    this.currentTab = tab;
-    document.querySelectorAll('#ai-tabs .ai-tab').forEach(function(t) { t.classList.remove('active'); });
-    var activeTab = document.querySelector('#ai-tabs .ai-tab[data-tab="' + tab + '"]');
-    if (activeTab) activeTab.classList.add('active');
-    if (tab === 'principle') { this.queryByMode(['原理']); }
-    else if (tab === 'simulation') { this.queryByMode(['指导']); }
-  },
-
-  handleMode: function(mode) {
-    this.currentMode = mode;
-    document.querySelectorAll('#ai-modes .ai-mode-btn').forEach(function(b) { b.classList.remove('active'); });
-    var activeBtn = document.querySelector('#ai-modes .ai-mode-btn[data-mode="' + mode + '"]');
-    if (activeBtn) activeBtn.classList.add('active');
-    switch (mode) {
-      case 'chat': this.addAssistantMsg('👋 你好！直接输入你的问题，我会结合当前实验上下文为你解答。'); break;
-      case 'principle': this.queryByMode(['原理']); break;
-      case 'formula': this.queryByMode(['公式']); break;
-      case 'guide': this.queryByMode(['指导']); break;
-    }
-  },
+  switchTab: function(tab) { /* 已移除标签栏 */ },
+  handleMode: function(mode) { /* 已移除模式栏 */ },
 
   queryByMode: function(tags) {
     var exp = AppState.currentExperiment || 'all';
@@ -9666,7 +9604,6 @@ var AIAssistant = {
   matchQuery: function(text) {
     var lower = text.toLowerCase();
     var exp = AppState.currentExperiment || 'all';
-    var tabTag = this.currentTab === 'principle' ? '原理' : '指导';
     var scored = AIKnowledgeBase.map(function(entry) {
       var kwScore = 0;
       for (var i = 0; i < entry.keywords.length; i++) {
@@ -9679,7 +9616,6 @@ var AIAssistant = {
       if (kwScore > 0) {
         if (entry.experiment === exp) score += 5;
         else if (entry.experiment !== 'all') score -= 2;
-        if (entry.tags.indexOf(tabTag) >= 0) score += 3;
       }
       return { entry: entry, score: score, kwScore: kwScore };
     });
