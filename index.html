@@ -2887,8 +2887,8 @@ const ThemeManager = {
   
   // 主题切换后的处理
   onThemeChanged() {
-    // 如果当前在实验页面，重新渲染原理页面
-    if (AppState.currentPage === 'experiment' && AppState.currentSubPage === 'principle') {
+    // 如果当前在实验页面，重新渲染原理页面（任何子页面都重新渲染原理页，因为原理页可能在后台）
+    if (AppState.currentPage === 'experiment') {
       renderPrinciplePage();
     }
     
@@ -2915,12 +2915,26 @@ const ThemeManager = {
       poiseuille3DScene.background = new THREE.Color(bgColor);
       if (poiseuille3DRenderer) {
         poiseuille3DRenderer.setClearColor(bgColor, 1);
+        // 立即渲染一帧
+        if (poiseuille3DCamera) {
+          poiseuille3DRenderer.render(poiseuille3DScene, poiseuille3DCamera);
+        }
       }
     }
 
     // 更新3D模拟场景的主题
     if (window.ThreeDSimulation && window.ThreeDSimulation.updateTheme) {
       window.ThreeDSimulation.updateTheme(AppState.isDarkTheme);
+    }
+    
+    // 重新绘制线图模拟Canvas（如果当前在线图模拟页面）
+    if (AppState.currentPage === 'experiment' && AppState.currentSubPage === 'lineSim') {
+      // 使用requestAnimationFrame确保在下一帧重绘
+      requestAnimationFrame(() => {
+        if (canvasCtx) {
+          drawSimulationCanvas();
+        }
+      });
     }
   },
 };
@@ -7158,6 +7172,13 @@ function setupEventListeners() {
       if (key === '1') { Navigation.goToExperiment('newton'); return; }
       if (key === '2') { Navigation.goToExperiment('poiseuille'); return; }
       if (key === '3') { Navigation.goToExperiment('stokes'); return; }
+      
+      // T键切换主题（任何子页面都有效）
+      if (key === 't') {
+        var themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) themeToggle.click();
+        return;
+      }
 
       // 以下快捷键只在"线图模拟"子页面有效
       if (AppState.currentSubPage !== 'lineSim') return;
@@ -7193,10 +7214,6 @@ function setupEventListeners() {
           break;
         case 'c':
           toggleCompareMode();
-          break;
-        case 't':
-          var themeToggle = document.getElementById('themeToggle');
-          if (themeToggle) themeToggle.click();
           break;
       }
     }
