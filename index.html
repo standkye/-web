@@ -3203,6 +3203,9 @@ function renderPrinciplePage() {
           <h3 style="color: ${colors.titleColor}; font-size: 18px;">四、基本实验原理</h3>
           <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">牛顿粘性定律指出：流体层间的剪切应力（τ）与速度梯度（du/dz）成正比，比例系数为流体的动力粘度（η），表达式为：</p>
           <div class="formula-box">τ = η · (du/dz)</div>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">由于剪切应力定义为 τ = F/A（单位面积上的内摩擦力），将其代入牛顿粘性定律 τ = η · (du/dz)，可得<strong>内摩擦力公式</strong>：</p>
+          <div class="formula-box">F = η · A · (du/dz)</div>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">该公式表明：流体层间的内摩擦力（F）与<strong>动力粘度（η）</strong>、<strong>接触面积（A）</strong>及<strong>速度梯度（du/dz）</strong>三者成正比。η 反映流体自身的粘稠特性，A 反映层间接触范围，du/dz 反映层间速度变化的剧烈程度——三者共同决定了流体抵抗剪切变形的内摩擦力大小。</p>
           <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">实验中，下板固定，上板以恒定速度（u）运动，带动相邻流体层运动，因流体粘性，各层流体速度从下板的0逐渐过渡到上板的u，形成连续的速度分布。通过改变u、z、η、A四个参数，观察流体位移轨迹及速度梯度的变化，验证粘性定律的适用性，明确各参数对流体流动特性的影响规律。</p>
           <div style="margin-top:12px;padding:10px 14px;background:rgba(0,212,255,0.06);border-radius:6px;border:1px dashed rgba(0,212,255,0.2);font-size:13px;color:${colors.titleColor};text-align:center;">
             📐 横轴：流体微团位移 <b>x</b>　｜　纵轴：板间距 <b>z</b>　｜　虚线：流体层位移轨迹　｜　实线：稳态速度梯度趋势线
@@ -3430,42 +3433,319 @@ function renderPrinciplePage() {
   } else if (AppState.currentExperiment === 'stokes') {
     principleContent = `
       <div class="principle-content">
-        <h2 style="color: ${colors.titleColor}">${exp.icon} ${exp.name}</h2>
-        
-        <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.borderColor};">
-          <h3 style="color: ${colors.titleColor}">实验简介</h3>
-          <p style="color: ${colors.textColor}">斯托克斯定律描述了小球在黏性流体中缓慢运动时所受的阻力。通过观察球体的沉降过程，可以测量流体的黏度。</p>
+        <h2 style="color: ${colors.titleColor}; font-size: 28px; border-bottom: 2px solid ${colors.borderColor}; padding-bottom: 12px; margin-bottom: 24px;">${exp.icon} ${exp.name} — 实验现象</h2>
+
+        <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.titleColor};">
+          <h3 style="color: ${colors.titleColor}; font-size: 18px;">一、实验简介</h3>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">本实验通过模拟黏性流体中球形颗粒的沉降现象，探究颗粒粒径、流体动力黏度、颗粒密度及流体密度对颗粒沉降速度的影响，梳理不同流动状态下的沉降规律，明确球形颗粒在黏性流体中沉降的全区间特性。</p>
         </div>
-        
+
         <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.borderColor};">
-          <h3 style="color: ${colors.titleColor}">斯托克斯定律</h3>
-          <p style="color: ${colors.textColor}">斯托克斯阻力公式：</p>
-          <div class="formula-box">${exp.formula}</div>
-          <p style="color: ${colors.textColor}">终端速度公式：</p>
-          <div class="formula-box">v = (2 · r² · g · (ρs - ρf)) / (9 · μ)</div>
-          <p style="color: ${colors.textColor}"><strong>其中：</strong></p>
-          <ul class="variable-list">
-            ${Object.entries(exp.variables).map(([symbol, desc]) => `<li><strong>${symbol}</strong>: ${desc}</li>`).join('')}
-          </ul>
-        </div>
-        
-        <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.borderColor};">
-          <h3 style="color: ${colors.titleColor}">实验装置</h3>
-          <p style="color: ${colors.textColor}">实验装置主要包括：</p>
-          <ol style="color: ${colors.textColor}; padding-left: 20px;">
-            <li>透明圆柱形容器，装满待测流体</li>
-            <li>不同材质和大小的小球</li>
-            <li>计时装置，测量沉降时间</li>
-            <li>刻度尺，测量沉降距离</li>
+          <h3 style="color: ${colors.titleColor}; font-size: 18px;">二、核心概念</h3>
+          <ol style="color: ${colors.textColor}; line-height: 2.0; font-size: 15px; padding-left: 24px;">
+            <li><strong>终端速度（v<sub>t</sub>）</strong>：球形颗粒在黏性流体中匀速沉降时的速度，是衡量沉降快慢的核心物理量；</li>
+            <li><strong>球形颗粒（r）</strong>：实验所用颗粒为规则球形，粒径均匀，可按需更换不同粒径的颗粒；</li>
+            <li><strong>流体动力黏度（η）</strong>：衡量流体黏性强弱的物理量，数值越大，流体黏性越强；</li>
+            <li><strong>颗粒密度（ρ<sub>p</sub>）</strong>：球形颗粒自身的密度，是影响沉降速度的重要因素；</li>
+            <li><strong>流体密度（ρ）</strong>：流体自身的密度，与颗粒密度共同影响沉降动力；</li>
+            <li><strong>雷诺数（Re）</strong>：无量纲数，表征流体流动的惯性力与黏性力比值，是划分沉降流动状态的核心判据，计算式为 Re = (ρ · v · d) / η（d 为颗粒直径，d = 2r）。</li>
           </ol>
         </div>
-        
+
         <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.borderColor};">
-          <h3 style="color: ${colors.titleColor}">关键概念</h3>
-          <p style="color: ${colors.textColor}">• <strong>终端速度</strong>：球体达到受力平衡时的恒定速度</p>
-          <p style="color: ${colors.textColor}">• <strong>阻力</strong>：流体对运动物体的阻碍力</p>
-          <p style="color: ${colors.textColor}">• <strong>浮力</strong>：流体对浸入其中物体的向上托力</p>
-          <p style="color: ${colors.textColor}">• <strong>雷诺数</strong>：需小于1，确保层流条件</p>
+          <h3 style="color: ${colors.titleColor}; font-size: 18px;">三、实验装置</h3>
+          <p style="color: ${colors.textColor}; line-height: 1.8; font-size: 15px; margin-bottom: 8px;">实验采用球形颗粒沉降装置，核心组成包括：</p>
+          <ol style="color: ${colors.textColor}; line-height: 2.0; font-size: 15px; padding-left: 24px;">
+            <li>透明沉降柱，用于盛装待测试黏性流体，便于观察颗粒沉降轨迹；</li>
+            <li>不同粒径（r）的均匀球形颗粒；</li>
+            <li>黏度调节装置，可更换不同动力黏度（η）的黏性流体；</li>
+            <li>密度调节装置，可调节流体密度（ρ）及颗粒密度（ρ<sub>p</sub>）；</li>
+            <li>测量与记录装置，用于捕捉颗粒沉降轨迹、测量沉降速度，绘制不同流动区间的沉降速度–时间关系曲线。</li>
+          </ol>
+        </div>
+
+        <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.titleColor};">
+          <h3 style="color: ${colors.titleColor}; font-size: 18px;">四、分区间实验原理与现象</h3>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">斯托克斯定律仅适用于层流区（Re &lt; 1），实际工程中颗粒沉降常覆盖更广的流动区间，不同区间的阻力规律与沉降特性如下：</p>
+        </div>
+
+        <!-- (一) 层流区 -->
+        <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.titleColor};">
+          <h3 style="color: ${colors.titleColor}; font-size: 18px;">（一）层流区（Re &lt; 1，斯托克斯区）</h3>
+
+          <h4 style="color: ${colors.titleColor}; font-size: 16px; margin-top: 12px;">▸ 核心原理</h4>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">球形颗粒在黏性流体中做缓慢匀速沉降（层流状态），颗粒受到的黏性阻力与流体动力黏度、颗粒沉降速度、颗粒半径成正比，表达式为：</p>
+          <div class="formula-box">F<sub>d</sub> = 6πηrv</div>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">当颗粒匀速沉降时，黏性阻力与颗粒所受重力、浮力达到平衡，此时沉降速度与颗粒半径的平方成正比，与流体动力黏度成反比，与颗粒密度和流体密度的差值成正比，终端速度公式为：</p>
+          <div class="formula-box">v<sub>t</sub> = 2r²(ρ<sub>p</sub> − ρ)g / (9η)</div>
+
+          <h4 style="color: ${colors.titleColor}; font-size: 16px; margin-top: 16px;">▸ 单参数变化现象</h4>
+
+          <!-- 1. 颗粒半径 r 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">1. 颗粒半径 r 变化（η、ρ<sub>p</sub>、ρ 不变）</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ r 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度显著增大，沉降速率加快；</li>
+                <li>沉降速度随粒径的变化更显著，增幅明显；</li>
+                <li>颗粒沉降更稳定，沉降路径更规整，趋近于匀速沉降状态。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ r 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度显著减小，沉降速率变慢；</li>
+                <li>沉降速度随粒径的变化更平缓，降幅减缓。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 2. 流体动力黏度 η 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">2. 流体动力黏度 η 变化（r、ρ<sub>p</sub>、ρ 不变）</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ η 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度显著减小，沉降过程变慢；</li>
+                <li>颗粒达到稳态沉降速度的时间延长，体现流体强黏性的阻碍作用。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ η 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度增大，沉降过程更顺畅；</li>
+                <li>颗粒达到稳态沉降速度的时间缩短，流体黏性阻碍作用减弱。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 3. 颗粒密度 ρp 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">3. 颗粒密度 ρ<sub>p</sub> 变化（r、η、ρ 不变）</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ ρ<sub>p</sub> 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度增大，沉降速率加快；</li>
+                <li>沉降速度随颗粒密度的变化更显著，增幅明显；</li>
+                <li>颗粒沉降更稳定，沉降路径更规整，匀速沉降特征更明显。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ ρ<sub>p</sub> 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度减小，沉降速率变慢；</li>
+                <li>沉降速度随颗粒密度的变化更平缓，降幅减缓；</li>
+                <li>颗粒沉降稳定性下降，沉降路径易受扰动，不够规整。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 4. 流体密度 ρ 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">4. 流体密度 ρ 变化（r、η、ρ<sub>p</sub> 不变）</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ ρ 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度减小，沉降速率变慢；</li>
+                <li>沉降轨迹整体左移，颗粒沉降速度减小；</li>
+                <li>沉降速度随流体密度的增加而缓慢降低，变化幅度平缓；</li>
+                <li>颗粒沉降更平稳，沉降路径更规整，受流体浮力影响显著。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ ρ 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度增大，沉降速率加快；</li>
+                <li>沉降速度随流体密度的变化更显著，增幅明显；</li>
+                <li>颗粒沉降稳定性下降，沉降路径易受扰动，浮力影响减弱。</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- (二) 过渡区 -->
+        <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.borderColor};">
+          <h3 style="color: ${colors.titleColor}; font-size: 18px;">（二）过渡区（1 ≤ Re ≤ 1000，阿伦尼乌斯区）</h3>
+
+          <h4 style="color: ${colors.titleColor}; font-size: 16px; margin-top: 12px;">▸ 核心原理</h4>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">颗粒沉降惯性力开始显现，边界层发生分离，阻力不再与速度线性相关，采用阿伦尼乌斯经验公式修正，对应终端速度近似关系为：v<sub>t</sub> 与 d 的 1.14 次方、密度差的 0.71 次方成正比，与黏度的 0.43 次方成反比，需通过迭代计算得到精确值。</p>
+
+          <h4 style="color: ${colors.titleColor}; font-size: 16px; margin-top: 16px;">▸ 单参数变化现象</h4>
+
+          <!-- 1. 颗粒半径 r -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">1. 颗粒半径 r 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ r 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度升高，但增幅低于层流区，不再符合平方增长规律；</li>
+                <li>颗粒沉降路径出现轻微摆动，规整性较层流区下降；</li>
+                <li>越靠近区间上限（Re = 1000），沉降速度对粒径的敏感度越低。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ r 减小（向层流区过渡）</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度降低，降幅逐渐回归层流区特征；</li>
+                <li>沉降路径摆动减弱，逐步恢复规整性。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 2. η 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">2. 流体动力黏度 η 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ η 增大（向层流区过渡）</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度下降，但阻碍效应弱于层流区；</li>
+                <li>颗粒沉降路径摆动减弱，稳定性小幅提升。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ η 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度升高，惯性效应进一步增强；</li>
+                <li>沉降路径摆动加剧，易向湍流区过渡。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 3. ρp 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">3. 颗粒密度 ρ<sub>p</sub> 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ ρ<sub>p</sub> 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度升高，密度差对沉降的驱动作用强于层流区；</li>
+                <li>颗粒沉降路径摆动略有增强，匀速特征弱化。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ ρ<sub>p</sub> 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度降低，若密度差过小，易出现沉降停滞；</li>
+                <li>颗粒沉降路径更易受流体扰动，稳定性进一步下降。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 4. ρ 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">4. 流体密度 ρ 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ ρ 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度平缓降低，浮力影响弱于层流区；</li>
+                <li>颗粒沉降路径摆动减弱，尾涡扰动小幅缓解。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ ρ 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度升高，密度差驱动效应增强；</li>
+                <li>颗粒沉降路径摆动加剧，稳定性下降。</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- (三) 湍流区 -->
+        <div class="principle-section" style="background: ${colors.bgColor}; border-color: ${colors.borderColor}; border-left: 4px solid ${colors.borderColor};">
+          <h3 style="color: ${colors.titleColor}; font-size: 18px;">（三）湍流区（Re &gt; 1000，牛顿区）</h3>
+
+          <h4 style="color: ${colors.titleColor}; font-size: 16px; margin-top: 12px;">▸ 核心原理</h4>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">颗粒沉降惯性力完全主导，黏性影响可忽略，阻力为压差阻力，符合牛顿阻力公式，对应终端速度近似为：</p>
+          <div class="formula-box">v<sub>t</sub> ≈ 1.74 · √[d(ρ<sub>p</sub> − ρ)g / ρ]</div>
+          <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">此区间终端速度与流体黏度基本无关。</p>
+
+          <h4 style="color: ${colors.titleColor}; font-size: 16px; margin-top: 16px;">▸ 单参数变化现象</h4>
+
+          <!-- 1. r 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">1. 颗粒半径 r 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ r 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度升高，但仅与粒径平方根成正比，增幅远低于低雷诺数区间；</li>
+                <li>颗粒沉降路径紊乱，伴随明显尾涡脱落，无稳定匀速段；</li>
+                <li>颗粒易发生横向偏移，沉降轨迹离散度显著升高。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ r 减小（向过渡区过渡）</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度降低，逐步回归过渡区变化规律；</li>
+                <li>路径紊乱程度减轻，尾涡效应减弱。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 2. η 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">2. 流体动力黏度 η 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲/▼ η 变化</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度几乎无变化，流体黏性不再对沉降产生显著影响；</li>
+                <li>仅极少量高黏度流体工况下，会出现向过渡区回落的现象。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 3. ρp 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">3. 颗粒密度 ρ<sub>p</sub> 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ ρ<sub>p</sub> 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度小幅升高，密度差为核心影响因子；</li>
+                <li>尾涡脱落频率加快，沉降路径紊乱程度略有上升。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ ρ<sub>p</sub> 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度明显降低，若密度接近流体密度，沉降趋于停滞；</li>
+                <li>沉降轨迹离散度升高，随机扰动增强。</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- 4. ρ 变化 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+            <div style="background:rgba(0,212,255,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(0,212,255,0.12);">
+              <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">4. 流体密度 ρ 变化</p>
+              <p style="color:#00d4ff;font-weight:600;margin-bottom:4px;">▲ ρ 增大</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度明显降低，浮力影响权重显著提升；</li>
+                <li>沉降路径紊乱程度略有缓解。</li>
+              </ol>
+            </div>
+            <div style="background:rgba(255,152,0,0.05);padding:12px 14px;border-radius:8px;border:1px solid rgba(255,152,0,0.12);">
+              <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">&nbsp;</p>
+              <p style="color:#ff9800;font-weight:600;margin-bottom:4px;">▼ ρ 减小</p>
+              <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
+                <li>颗粒沉降速度小幅升高，密度差驱动效应增强；</li>
+                <li>尾涡扰动加剧，沉降稳定性进一步下降。</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;padding:10px 14px;background:rgba(0,212,255,0.06);border-radius:6px;border:1px dashed rgba(0,212,255,0.2);font-size:13px;color:${colors.titleColor};text-align:center;">
+          📐 横轴：颗粒沉降位移 <b>x</b>　｜　纵轴：沉降柱高度 <b>z</b>　｜　虚线：颗粒沉降轨迹　｜　实线：稳态沉降速度趋势线
         </div>
       </div>
     `;
@@ -6962,7 +7242,10 @@ function toggleCompAnim() {
 function resetCompAnimFull() {
   pauseCompAnim();
   initCompParamsForExp(AppState.currentExperiment);
+  // 同时重置流体预设选择状态为"水"
+  window._compSelectedPresets = { A: '水 (20°C)', B: '水 (20°C)', C: '水 (20°C)' };
   syncCompSlidersToParams();
+  updateAllCompPresetDisplays();
   initCompParticles();
   updateCompDataDisplay();
   renderCompCanvas();
