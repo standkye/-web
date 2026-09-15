@@ -370,6 +370,7 @@ body {
    ======================================== */
 
 .experiment-page {
+  --experiment-nav-height: 60px;
   height: 100vh;
   overflow: hidden;
 }
@@ -398,7 +399,7 @@ body {
   top: 0;
   right: 0;
   width: 100%;
-  height: 50px;
+  height: var(--experiment-nav-height);
   background: var(--surface);
   border: none;
   border-bottom: 1px solid var(--border);
@@ -427,7 +428,7 @@ body {
 }
 
 .menu-container {
-  margin-top: 50px;
+  margin-top: var(--experiment-nav-height);
   padding: 0;
   transition: opacity 0.3s;
 }
@@ -475,7 +476,7 @@ body {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 10px 20px;
-  height: 60px;
+  height: var(--experiment-nav-height);
   display: flex;
   align-items: center;
   gap: 15px;
@@ -747,6 +748,24 @@ input[type="range"]::-moz-range-thumb {
   border-color: var(--accent);
 }
 
+/* 流体预设值被量程钳制时的提示 */
+.preset-clamp-hint {
+  display: none;
+  margin-top: 10px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.6;
+  background: rgba(0, 100, 255, 0.10);
+  border-left: 3px solid #0064ff;
+  color: var(--text-primary);
+}
+
+body.dark-theme .preset-clamp-hint {
+  background: rgba(0, 140, 255, 0.16);
+  border-left-color: #4da6ff;
+}
+
 /* 控制按钮 */
 .control-buttons {
   display: flex;
@@ -882,6 +901,87 @@ body.dark-theme .warning-message {
 body.dark-theme .warning-text {
   color: #ffd54f;
 }
+
+/* 适用性提示横幅（模型适用范围：Re 分区、层流判据等） */
+.applicability-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 12px 0;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.applicability-banner .ap-icon {
+  font-size: 17px;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.applicability-banner .ap-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.applicability-banner .ap-title {
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.applicability-banner .ap-formula {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+}
+
+/* info：蓝色，仅作说明 */
+.applicability-banner.ap-info {
+  background: rgba(0, 122, 204, 0.09);
+  border-left-color: #007acc;
+  color: #004578;
+}
+.applicability-banner.ap-info .ap-formula { color: #004578; }
+
+/* warn：琥珀色，提示超出适用范围 */
+.applicability-banner.ap-warn {
+  background: rgba(255, 193, 7, 0.16);
+  border-left-color: #ffc107;
+  color: #856404;
+}
+.applicability-banner.ap-warn .ap-formula { color: #856404; }
+
+/* bad：红色，公式已失效 */
+.applicability-banner.ap-bad {
+  background: rgba(217, 48, 37, 0.12);
+  border-left-color: #d93025;
+  color: #a50e0e;
+}
+.applicability-banner.ap-bad .ap-formula { color: #a50e0e; }
+
+body.dark-theme .applicability-banner.ap-info {
+  background: rgba(0, 122, 204, 0.22);
+  color: #9ecbff;
+}
+body.dark-theme .applicability-banner.ap-info .ap-formula { color: #9ecbff; }
+body.dark-theme .applicability-banner.ap-warn {
+  background: rgba(255, 193, 7, 0.18);
+  color: #ffd54f;
+}
+body.dark-theme .applicability-banner.ap-warn .ap-formula { color: #ffd54f; }
+body.dark-theme .applicability-banner.ap-bad {
+  background: rgba(217, 48, 37, 0.22);
+  color: #ff8a80;
+}
+body.dark-theme .applicability-banner.ap-bad .ap-formula { color: #ff8a80; }
+.applicability-banner .ap-formula { background: rgba(0, 0, 0, 0.07); }
+body.dark-theme .applicability-banner .ap-formula { background: rgba(255, 255, 255, 0.10); }
 
 .data-card {
   background: var(--data-output-bg);
@@ -1916,11 +2016,11 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 </head>
 <body>
-  <!-- AI 流体助手 -->
-  <button id="ai-fab" title="AI 流体助手">💧</button>
+  <!-- 本地规则式智能导学（不调用外部大模型） -->
+  <button id="ai-fab" title="智能导学">💧</button>
   <div id="ai-panel">
     <div id="ai-panel-header">
-      <span class="ai-title">💧 流体·AI 助手</span>
+      <span class="ai-title">💧 流体·智能导学</span>
       <div class="ai-actions">
         <button onclick="AIAssistant.minimize()" title="最小化">─</button>
         <button onclick="AIAssistant.close()" title="关闭">✕</button>
@@ -1928,8 +2028,8 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
     </div>
     <div id="ai-messages">
       <div class="ai-msg assistant">
-        <div class="ai-msg-title">👋 你好！我是流体·AI 助手</div>
-        我可以帮你理解实验原理、推导公式、解答模拟操作问题。<br><br>
+          <div class="ai-msg-title">👋 你好！我是流体·智能导学</div>
+          我会依据内置物理规则帮助你理解实验原理、推导公式和模拟操作；不连接外部大模型。<br><br>
         你可以直接输入问题，或点击上方的快捷按钮。当前实验：<strong style="color:#00d4ff;">未选择</strong>
       </div>
     </div>
@@ -1997,7 +2097,7 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
         <div class="menu-container" id="menuContainer">
           <button class="menu-item active" data-page="principle">📖 原理</button>
           <button class="menu-item" data-page="lineSim">📈 线图模拟</button>
-          <button class="menu-item" data-page="3dSim">🎮 3D模拟</button>
+          <button class="menu-item" data-page="3dSim">🎮 3D可视化</button>
         </div>
       </aside>
 
@@ -2069,7 +2169,7 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
         <span class="param-symbol">R - 管道半径 R</span>
         <span class="param-value" id="radiusValue">2×10⁻³</span>
       </div>
-      <input type="range" id="radius" min="0.0005" max="0.005" step="0.0001" value="0.002">
+      <input type="range" id="radius" min="0.0002" max="0.005" step="0.0001" value="0.001">
       <div style="font-size: 11px; color: var(--text-hint); text-align: right;">m</div>
     </div>
   
@@ -2087,7 +2187,7 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
         <span class="param-symbol">ΔP - 压强差 ΔP</span>
         <span class="param-value" id="pressureValue">1×10³</span>
       </div>
-      <input type="range" id="pressure" min="102" max="105" step="0.01" value="1000">
+      <input type="range" id="pressure" min="50" max="10000" step="10" value="1000">
       <div style="font-size: 11px; color: var(--text-hint); text-align: right;">Pa</div>
     </div>
   
@@ -2096,7 +2196,7 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
         <span class="param-symbol">μ - 动力黏度 μ</span>
         <span class="param-value" id="viscosityValue">1×10⁻³</span>
       </div>
-      <input type="range" id="viscosity" min="0.00005" max="2" step="0.00005" value="0.001">
+      <input type="range" id="viscosity" min="0.000005" max="2" step="0.000005" value="0.001">
       <div style="font-size: 11px; color: var(--text-hint); text-align: right;">Pa·s</div>
     </div>
   
@@ -2157,8 +2257,15 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
       <!-- 中央动画画布 -->
       <div class="canvas-area">
         <canvas id="simCanvas"></canvas>
-        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:10;">
-          <button class="ctrl-btn" id="btn-report" title="生成论文级别实验报告" style="background:#5b6abf;color:#fff;font-size:12px;padding:5px 16px;">📄 导出实验报告</button>
+        ${AppState.currentExperiment === 'stokes' ? `
+          <div class="stokes-time-note" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:10;padding:5px 10px;border-radius:999px;background:rgba(10,30,60,0.78);border:1px solid rgba(0,212,255,0.32);color:#bceeff;font-size:11px;white-space:nowrap;pointer-events:none;">
+            教学演示固定约 15 秒完成下落，便于观察；曲线与数值按物理模型计算
+          </div>
+        ` : ''}
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:10;white-space:nowrap;">
+          <button class="ctrl-btn" id="btn-report" title="根据你的实际操作生成实验报告：记录参数调节、仿真过程与流体切换，并绘制对应的实测曲线（按钮上的数字为已记录的数据点数）" style="background:#5b6abf;color:#fff;font-size:12px;padding:5px 16px;">📄 导出实验报告</button>
+          <button class="ctrl-btn" id="btn-export-csv" title="导出本次实验的原始记录 CSV" style="font-size:11px;padding:5px 9px;">CSV</button>
+          <button class="ctrl-btn" id="btn-export-json" title="导出可再次读取的完整实验记录 JSON" style="font-size:11px;padding:5px 9px;">JSON</button>
         </div>
       </div>
       
@@ -2248,27 +2355,27 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
                     <h3>参数控制</h3>
 
                     <div class="control-group">
-                      <label>粘滞系数 η (Pa·s)</label>
-                      <input type="range" id="newton-viscosity" min="0.1" max="10" step="0.1" value="1">
-                      <div class="value-display" id="newton-viscosity-val">1.0 Pa·s</div>
+                      <label>板间距 z (mm)</label>
+                      <input type="range" id="newton-gap" min="0.2" max="10" step="0.1" value="2">
+                      <div class="value-display" id="newton-gap-val">2.0 mm</div>
                     </div>
 
                     <div class="control-group">
-                      <label>顶板速度 v (m/s)</label>
-                      <input type="range" id="newton-velocity" min="0.1" max="5" step="0.1" value="2">
-                      <div class="value-display" id="newton-velocity-val">2.0 m/s</div>
+                      <label>上板速度 u (m/s)</label>
+                      <input type="range" id="newton-velocity" min="0.05" max="1" step="0.05" value="1">
+                      <div class="value-display" id="newton-velocity-val">1.00 m/s</div>
                     </div>
 
                     <div class="control-group">
-                      <label>板间距 Δy (m)</label>
-                      <input type="range" id="newton-gap" min="0.5" max="3" step="0.1" value="1">
-                      <div class="value-display" id="newton-gap-val">1.0 m</div>
+                      <label>板面积 A (m²)</label>
+                      <input type="range" id="newton-area" min="0.01" max="0.5" step="0.01" value="0.1">
+                      <div class="value-display" id="newton-area-val">0.10 m²</div>
                     </div>
 
                     <div class="control-group">
-                      <label>顶板面积 A (m²)</label>
-                      <input type="range" id="newton-area" min="0.2" max="1" step="0.05" value="1">
-                      <div class="value-display" id="newton-area-val">1.0 m²</div>
+                      <label>动力黏度 η (Pa·s)</label>
+                      <input type="range" id="newton-viscosity" min="0.0005" max="2" step="0.0005" value="0.005">
+                      <div class="value-display" id="newton-viscosity-val">0.0050 Pa·s</div>
                     </div>
                   </div>
 
@@ -2280,6 +2387,8 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
                       <div class="stat-card" style="grid-column: 1 / -1;">内摩擦力<span class="value" id="newton-force">2.0</span> N</div>
                     </div>
                   </div>
+
+                  <div id="newton-applicability" style="display:none;"></div>
 
                   <div class="panel-section">
                     <h3>流动区域划分</h3>
@@ -2331,26 +2440,26 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
 
                     <div class="control-group">
                       <label>管道半径 R (mm)</label>
-                      <input type="range" id="poiseuille-radius" min="0.5" max="5" step="0.1" value="2.5">
-                      <div class="value-display" id="poiseuille-radius-val">2.5 mm</div>
+                      <input type="range" id="poiseuille-radius" min="0.2" max="5" step="0.1" value="1.0">
+                      <div class="value-display" id="poiseuille-radius-val">1.0 mm</div>
                     </div>
 
                     <div class="control-group">
                       <label>压强差 ΔP (Pa)</label>
-                      <input type="range" id="poiseuille-pressure" min="10" max="500" step="1" value="100">
-                      <div class="value-display" id="poiseuille-pressure-val">100 Pa</div>
+                      <input type="range" id="poiseuille-pressure" min="50" max="10000" step="10" value="1000">
+                      <div class="value-display" id="poiseuille-pressure-val">1000 Pa</div>
                     </div>
 
                     <div class="control-group">
-                      <label>粘滞系数 η (mPa·s)</label>
-                      <input type="range" id="poiseuille-viscosity" min="1" max="8" step="0.5" value="2">
-                      <div class="value-display" id="poiseuille-viscosity-val">2.0 mPa·s</div>
+                      <label>动力黏度 μ (Pa·s)</label>
+                      <input type="range" id="poiseuille-viscosity" min="0.0005" max="2" step="0.0005" value="0.001">
+                      <div class="value-display" id="poiseuille-viscosity-val">0.0010 Pa·s</div>
                     </div>
 
                     <div class="control-group">
                       <label>管道长度 L (m)</label>
-                      <input type="range" id="poiseuille-length" min="0.1" max="2" step="0.1" value="1">
-                      <div class="value-display" id="poiseuille-length-val">1.0 m</div>
+                      <input type="range" id="poiseuille-length" min="0.1" max="2" step="0.05" value="1">
+                      <div class="value-display" id="poiseuille-length-val">1.00 m</div>
                     </div>
                   </div>
 
@@ -2375,6 +2484,8 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
                       </div>
                     </div>
                   </div>
+
+                  <div id="poiseuille-applicability" style="display:none;"></div>
 
                   <div class="panel-section">
                     <h3>粒子颜色说明</h3>
@@ -2404,15 +2515,27 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
                     <h3>参数控制</h3>
 
                     <div class="control-group">
-                      <label>球体半径 R (mm)</label>
-                      <input type="range" id="stokes-radius" min="0.5" max="3" step="0.1" value="2.0">
-                      <div class="value-display" id="stokes-radius-val">2.0 mm</div>
+                      <label>小球半径 r (mm)</label>
+                      <input type="range" id="stokes-radius" min="0.2" max="3" step="0.1" value="1.0">
+                      <div class="value-display" id="stokes-radius-val">1.0 mm</div>
                     </div>
 
                     <div class="control-group">
-                      <label>流体粘度 η (Pa·s)</label>
-                      <input type="range" id="stokes-viscosity" min="0.5" max="3" step="0.1" value="1.0">
-                      <div class="value-display" id="stokes-viscosity-val">1.000 Pa·s</div>
+                      <label>小球密度 ρs (kg/m³)</label>
+                      <input type="range" id="stokes-density" min="500" max="20000" step="10" value="2500">
+                      <div class="value-display" id="stokes-density-val">2500 kg/m³</div>
+                    </div>
+
+                    <div class="control-group">
+                      <label>流体密度 ρf (kg/m³)</label>
+                      <input type="range" id="stokes-fluid-density" min="0.05" max="1500" step="0.5" value="1000">
+                      <div class="value-display" id="stokes-fluid-density-val">1000 kg/m³</div>
+                    </div>
+
+                    <div class="control-group">
+                      <label>动力黏度 μ (Pa·s)</label>
+                      <input type="range" id="stokes-viscosity" min="0.000005" max="2" step="0.000005" value="1.0">
+                      <div class="value-display" id="stokes-viscosity-val">1.0000 Pa·s</div>
                     </div>
                   </div>
 
@@ -2427,8 +2550,9 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
                       <div class="stat-card" style="grid-column: 1 / -1;">收尾速度 v<sub>t</sub><span class="value" id="stokes-terminal">0.00</span> mm/s</div>
                     </div>
                     <div id="stokes-warning" style="margin-top: 3px; padding: 4px; background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0000; border-radius: 4px; color: #ff4444; font-weight: bold; text-align: center; display: none; font-size: 0.6rem;">
-                      ⚠️ 雷诺数过高，层流条件破坏
+                      ⚠️ 已超出斯托克斯区，阻力改用修正公式
                     </div>
+                    <div id="stokes-applicability" style="display:none;"></div>
                     <div id="stokes-nomove-warning" style="margin-top: 3px; padding: 4px; background: rgba(255, 165, 0, 0.2); border: 1px solid #ff8800; border-radius: 4px; color: #ffaa00; font-weight: bold; text-align: center; display: none; font-size: 0.6rem;">
                       ⚠️ 粘滞力过大，小球无法下沉
                     </div>
@@ -2471,7 +2595,7 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
         </ul>
         <h4>鼠标操作</h4>
         <ul>
-          <li>点击左侧菜单切换 原理/线图模拟/真实模拟</li>
+          <li>点击左侧菜单切换 原理/线图模拟/3D可视化</li>
           <li>拖动滑块调节参数</li>
         </ul>
       </div>
@@ -2485,7 +2609,7 @@ body.dark-theme [id="3dSimPage"] .tab-btn:hover{background:rgba(255,255,255,0.2)
     <button class="qr-modal-close" id="qrModalClose">×</button>
     <div class="qr-modal-title">扫码在手机上访问</div>
     <canvas id="qrCanvas" width="200" height="200"></canvas>
-    <div class="qr-modal-url">https://hanhhhy.github.io/viscosity-simulator/</div>
+    <div class="qr-modal-url" id="qrModalUrl">当前页面地址</div>
     <div class="qr-modal-hint">使用手机相机扫描二维码即可打开</div>
   </div>
 </div>
@@ -2508,6 +2632,7 @@ let poiseuille3DParticles = [];
 let poiseuille3DGrid = null;
 let poiseuille3DControls = null;  // 轨道控制器，用于自由调整视角
 let poiseuille3DInitialParticlePositions = [];  // 保存粒子的初始位置，用于重置
+let poiseuille3DParticleDensity = null;  // 当前密度对应的可视化粒子数
 
 // 全局状态管理
 const AppState = {
@@ -2518,10 +2643,13 @@ const AppState = {
   isDarkTheme: false,
   simulationRunning: false,
   simulationPaused: false,
+  measurementMode: false, // 开启后仅对记录值模拟仪器读数误差，不改变理论模型
+  lastChangedParam: null,
   simTime: 0,
   stokesBallY: 0,  // 初始位置在顶部（0米）
   stokesBallV: 0,
   stokesBallDistance: 0,  // 初始下落距离0米
+  stokesBallTime: 0,  // 真实物理下落时间（动画可独立加速）
   stokesBallStartTime: null,  // 小球开始下落时间
   stokesBallFd: 0,  // 阻力（用于实时显示）
   newtonGradientLineStartTime: null,  // 牛顿实验虚线开始时间
@@ -2546,19 +2674,19 @@ const AppState = {
 var compParams = { A:{}, B:{}, C:{} };
 var _compDefaults = {
   newton: [
-    {viscosity:0.001, velocity:0.1, spacing:0.01, area:0.1},
-    {viscosity:0.001, velocity:0.1, spacing:0.01, area:0.1},
-    {viscosity:0.001, velocity:0.1, spacing:0.01, area:0.1}
+    {viscosity:0.005, velocity:1.0, spacing:2, area:0.1},
+    {viscosity:0.005, velocity:1.0, spacing:2, area:0.1},
+    {viscosity:0.005, velocity:1.0, spacing:2, area:0.1}
   ],
   poiseuille: [
-    {radius:0.002, length:1.0, dp:102, viscosity:0.001, _rho:1000},
-    {radius:0.002, length:1.0, dp:102, viscosity:0.001, _rho:1000},
-    {radius:0.002, length:1.0, dp:102, viscosity:0.001, _rho:1000}
+    {radius:0.001, length:1.0, dp:1000, viscosity:0.001, _rho:1000},
+    {radius:0.001, length:1.0, dp:1000, viscosity:0.001, _rho:1000},
+    {radius:0.001, length:1.0, dp:1000, viscosity:0.001, _rho:1000}
   ],
   stokes: [
-    {radius:0.003, viscosity:1.0, rhop:2500, rhof:1000, g:9.8},
-    {radius:0.003, viscosity:1.0, rhop:2500, rhof:1000, g:9.8},
-    {radius:0.003, viscosity:1.0, rhop:2500, rhof:1000, g:9.8}
+    {radius:0.001, viscosity:1.0, rhop:2500, rhof:1000, g:9.8},
+    {radius:0.001, viscosity:1.0, rhop:2500, rhof:1000, g:9.8},
+    {radius:0.001, viscosity:1.0, rhop:2500, rhof:1000, g:9.8}
   ]
 };
 var compParticles = null;
@@ -2621,24 +2749,24 @@ const EXPERIMENTS = {
     name: '牛顿黏性定律实验',
     icon: '📐',
     formula: 'F = -η × A × (du/dz)',
-    description: '探索牛顿黏性定律，理解剪切应力与速度梯度的关系',
+    description: '探索牛顿黏性定律，理解剪切应力与速度梯度的关系（默认 z=2mm、u=1m/s，速度梯度 500 s⁻¹，黏性力 0.25 N 便于观测）',
     variables: {
       'F': '黏性力 (N)',
       'τ': '剪切应力 (Pa)',
       'grad': '速度梯度 (s⁻¹)'
     },
     params: [
-      { id: 'distance', name: '板间距 z', symbol: 'z', unit: 'mm', min: 1, max: 50, step: 1, value: 50 },
-      { id: 'velocity', name: '上板速度 u', symbol: 'u', unit: 'm/s', min: 0.01, max: 1.0, step: 0.01, value: 0.1 },
-      { id: 'area', name: '板面积 A', symbol: 'A', unit: 'm²', min: 0.01, max: 1.0, step: 0.01, value: 0.1 },
-      { id: 'viscosity', name: '动力黏度 η', symbol: 'η', unit: 'Pa·s', min: 0.00005, max: 2.0, step: 0.00005, value: 0.001, useFluidPreset: true }
+      { id: 'distance', name: '板间距 z', symbol: 'z', unit: 'mm', min: 0.2, max: 10, step: 0.1, value: 2 },
+      { id: 'velocity', name: '上板速度 u', symbol: 'u', unit: 'm/s', min: 0.05, max: 1.0, step: 0.05, value: 1.0 },
+      { id: 'area', name: '板面积 A', symbol: 'A', unit: 'm²', min: 0.01, max: 0.5, step: 0.01, value: 0.1 },
+      { id: 'viscosity', name: '动力黏度 η', symbol: 'η', unit: 'Pa·s', min: 0.0005, max: 2.0, step: 0.0005, value: 0.005, useFluidPreset: true }
     ]
   },
   poiseuille: {
     name: '泊肃叶定律实验',
     icon: '💧',
     formula: 'Q = πR⁴ΔP / (8μL)',
-    description: '研究管道中的层流流动，掌握流量与压降的关系',
+    description: '研究管道中的层流流动，掌握流量与压降的关系（默认 R=1mm、ΔP=1000Pa，流量 0.393 mL/s、Re=250 稳居层流区）',
     variables: {
       'Q': '体积流量 (m³/s)',
       'vmax': '最大速度 (m/s)',
@@ -2647,10 +2775,10 @@ const EXPERIMENTS = {
       'v_avg': '平均速度 (m/s)'
     },
     params: [
-      { id: 'radius', name: '管道半径 R', symbol: 'R', unit: 'm', min: 0.0005, max: 0.005, step: 0.0001, value: 0.002 },
+      { id: 'radius', name: '管道半径 R', symbol: 'R', unit: 'm', min: 0.0002, max: 0.005, step: 0.0001, value: 0.001 },
       { id: 'length', name: '管道长度 L', symbol: 'L', unit: 'm', min: 0.1, max: 2.0, step: 0.05, value: 1.0 },
-      { id: 'pressure', name: '压强差 ΔP', symbol: 'ΔP', unit: 'Pa', min: 102, max: 105, step: 0.01, value: 102 },
-      { id: 'viscosity', name: '动力黏度 μ', symbol: 'μ', unit: 'Pa·s', min: 0.00005, max: 2.0, step: 0.00005, value: 0.001, useFluidPreset: true },
+      { id: 'pressure', name: '压强差 ΔP', symbol: 'ΔP', unit: 'Pa', min: 50, max: 10000, step: 10, value: 1000 },
+      { id: 'viscosity', name: '动力黏度 μ', symbol: 'μ', unit: 'Pa·s', min: 0.000005, max: 2.0, step: 0.000005, value: 0.001, useFluidPreset: true },
       { id: 'density', name: '流体密度 ρ', symbol: 'ρ', unit: 'kg/m³', min: 0.05, max: 1500, step: 0.5, value: 1000, useFluidPreset: true }
     ]
   },
@@ -2658,7 +2786,7 @@ const EXPERIMENTS = {
     name: '斯托克斯定律实验',
     icon: '⚪',
     formula: 'F = 6πμrv',
-    description: '观察球体在黏性流体中的沉降，学习阻力计算公式',
+    description: '观察球体在黏性流体中的沉降，学习阻力计算公式（默认用甘油量级 μ=1Pa·s，Re₀=0.007 严格落在斯托克斯区，F=6πμrv 成立）',
     variables: {
       'Fg': '重力 (N)',
       'Fb': '浮力 (N)',
@@ -2667,10 +2795,10 @@ const EXPERIMENTS = {
       'Re': '雷诺数'
     },
     params: [
-      { id: 'ballRadius', name: '小球半径 r', symbol: 'r', unit: 'm', min: 0.0001, max: 0.01, step: 0.0001, value: 0.001 },
+      { id: 'ballRadius', name: '小球半径 r', symbol: 'r', unit: 'm', min: 0.0002, max: 0.003, step: 0.0001, value: 0.001 },
       { id: 'ballDensity', name: '小球密度 ρs', symbol: 'ρs', unit: 'kg/m³', min: 500, max: 20000, step: 10, value: 2500 },
       { id: 'fluidDensity', name: '流体密度 ρf', symbol: 'ρf', unit: 'kg/m³', min: 0.05, max: 1500, step: 0.5, value: 1000, useFluidPreset: true },
-      { id: 'viscosity', name: '动力黏度 μ', symbol: 'μ', unit: 'Pa·s', min: 0.00005, max: 2.0, step: 0.00005, value: 0.001, useFluidPreset: true }
+      { id: 'viscosity', name: '动力黏度 μ', symbol: 'μ', unit: 'Pa·s', min: 0.000005, max: 2.0, step: 0.000005, value: 1.0, useFluidPreset: true }
     ]
   }
 };
@@ -2803,6 +2931,8 @@ const PhysicsEngine = {
       volume: isFinite(volume) ? volume : 0,
       mass: isFinite(mass) ? mass : 0,
       Re: isFinite(Re) ? Re : 0,
+      Re0: isFinite(Re0) ? Re0 : 0,
+      vt0: isFinite(vt0) ? vt0 : 0,
       dragFormula: dragFormula
     };
   },
@@ -2827,6 +2957,225 @@ const PhysicsEngine = {
     }
   }
 };
+
+// 教学动画固定在约 15 秒内完成，便于观察完整的加速与受力过程。
+// 速度、阻力和线图数据仍按所选预设的物理模型计算。
+const STOKES_TARGET_FALL_TIME = 15;
+
+// 侧栏位于主导航之外，窄屏时导航高度会随内容折行变化；用实际高度保持两条下分界线对齐。
+function syncSidebarHeaderHeight() {
+  const nav = document.querySelector('.experiment-nav');
+  const sidebar = document.getElementById('sidebar');
+  if (nav && sidebar && nav.offsetHeight > 0) {
+    sidebar.style.setProperty('--experiment-nav-height', `${nav.offsetHeight}px`);
+  }
+}
+window.addEventListener('resize', syncSidebarHeaderHeight);
+
+// 根据实际阻力分区返回速度响应。低雷诺数为线性斯托克斯响应，
+// 高雷诺数的二次阻力则使用 v=v_t·tanh(a·t/v_t)，避免气体中“起步异常慢”。
+function getStokesResponseModel(params, calc) {
+  const mass = Math.max(calc.mass || 0, 1e-12);
+  const radius = Math.max(params.ballRadius || 0, 1e-9);
+  const viscosity = Math.max(params.viscosity || 0, 1e-12);
+  const terminalVelocity = Math.max(calc.vt || 0, 0);
+  const netAcceleration = Math.max(0, ((calc.Fg || 0) - (calc.Fb || 0)) / mass);
+  const linearTau = mass / (6 * Math.PI * viscosity * radius);
+
+  if (calc.dragFormula === 'newton' && terminalVelocity > 0 && netAcceleration > 0) {
+    const tau = terminalVelocity / netAcceleration;
+    const logCosh = (x) => x > 20 ? x - Math.LN2 : Math.log(Math.cosh(x));
+    return {
+      tau,
+      velocityAt: (t) => terminalVelocity * Math.tanh(netAcceleration * Math.max(t, 0) / terminalVelocity),
+      distanceAt: (t) => (terminalVelocity * terminalVelocity / netAcceleration) * logCosh(netAcceleration * Math.max(t, 0) / terminalVelocity)
+    };
+  }
+
+  const tau = Math.max(linearTau, 1e-9);
+  return {
+    tau,
+    velocityAt: (t) => terminalVelocity * (1 - Math.exp(-Math.max(t, 0) / tau)),
+    distanceAt: (t) => terminalVelocity * (Math.max(t, 0) - tau * (1 - Math.exp(-Math.max(t, 0) / tau)))
+  };
+}
+
+// ========================================
+// 适用性检查（模型适用范围之外的物理情形需向学生提示）
+// ========================================
+
+/**
+ * 斯托克斯实验：判定当前参数所处的阻力分区，并给出适用范围说明。
+ * 返回 { region, label, Re, ok, level, msg, formula }
+ *   level: 'ok' | 'info' | 'warn'  —— 决定提示的醒目程度
+ */
+function checkStokesApplicability(r, rhos, rhof, mu, g) {
+  g = g || 9.8;
+  var phy = PhysicsEngine.stokes(r, rhos, rhof, mu, g);
+  var Re0 = phy.Re0 !== undefined ? phy.Re0 : 0;
+  var diff = rhos - rhof;
+  var out = { Re: phy.Re, Re0: Re0, region: phy.dragFormula, ok: true, level: 'info' };
+
+  // 中性浮力：不动
+  if (Math.abs(diff) < 1e-9) {
+    out.ok = false;
+    out.level = 'info';
+    out.region = 'none';
+    out.label = '静止（中性浮力）';
+    out.formula = 'ρs = ρf';
+    out.msg = '小球密度与流体密度相等，净重力为零，小球将悬浮静止，不存在终端速度。';
+    return out;
+  }
+
+  // 上浮：ρs < ρf —— 先记下方向性说明，下面再与分区说明合并（不 return，避免丢失分区信息）
+  var buoyant = diff < 0;
+  var floatNote = buoyant
+    ? '另外，小球密度小于流体密度，小球将<b>上浮</b>而非沉降；程序输出的速度大小仍适用同一套阻力公式，'
+      + '但报告中称为「沉降速度」并不准确，应理解为「方向向上的终端速度」。'
+    : '';
+
+  switch (phy.dragFormula) {
+    case 'stokes':
+      out.label = '斯托克斯区';
+      out.formula = 'Fd = 6πμrv';
+      out.level = 'info';
+      out.msg = 'Re < 0.1，处于斯托克斯区，黏滞阻力与速度成正比，斯托克斯公式严格适用。';
+      break;
+    case 'oseen':
+      out.ok = false;
+      out.label = 'Oseen 修正区';
+      out.formula = 'Fd = 6πμrv·(1 + 3Re/8)';
+      out.level = 'warn';
+      out.msg = '0.1 ≤ Re < 1，已偏离斯托克斯区。惯性效应开始显现，程序改用 Oseen 一阶修正计算阻力，'
+              + '此时纯斯托克斯公式 F = 6πμrv 会高估终端速度。';
+      break;
+    case 'schiller-naumann':
+      out.ok = false;
+      out.label = 'Schiller-Naumann 过渡区';
+      out.formula = 'Fd = 6πμrv·(1 + 0.15Re^0.687)';
+      out.level = 'warn';
+      out.msg = '1 ≤ Re < 800，流动已进入过渡区，球后开始出现涡旋。程序采用 Schiller-Naumann 经验修正式，'
+              + '斯托克斯公式在此区间不再适用。';
+      break;
+    case 'newton':
+      out.ok = false;
+      out.label = '牛顿阻力区（湍流）';
+      out.formula = 'Fd = ½·ρf·Cd·πr²·v²（Cd ≈ 0.44）';
+      out.level = 'warn';
+      out.msg = 'Re ≥ 800，处于牛顿阻力区，阻力与速度的平方成正比（湍流尾流）。'
+              + '斯托克斯定律在此完全不适用，程序改用平方阻力律计算。';
+      break;
+    default:
+      out.label = '未知';
+      out.formula = '—';
+  }
+  if (floatNote) {
+    out.ok = false;
+    out.msg = out.msg + floatNote;
+    out.formula = out.formula + '　｜　ρs < ρf（上浮）';
+  }
+  return out;
+}
+
+/**
+ * 泊肃叶实验：判定层流/过渡/湍流，泊肃叶公式仅在层流下成立。
+ */
+function checkPoiseuilleApplicability(R, L, dP, mu, rho) {
+  var phy = PhysicsEngine.poiseuille(R, L, dP, mu, rho);
+  var Re = phy.Re;
+  var out = { Re: Re, v_avg: phy.v_avg, Q: phy.Q, vmax: phy.vmax, ok: true, level: 'info' };
+
+  if (Re < 2000) {
+    out.region = 'laminar';
+    out.label = '层流';
+    out.level = 'info';
+    out.msg = 'Re < 2000，流动为层流，速度剖面为抛物面，泊肃叶公式 Q = πR⁴ΔP/(8μL) 严格适用。';
+  } else if (Re < 4000) {
+    out.region = 'transition';
+    out.label = '过渡状态';
+    out.ok = false;
+    out.level = 'warn';
+    out.msg = '2000 ≤ Re < 4000，流动进入层流-湍流过渡区，流动状态不稳定，'
+            + '泊肃叶公式的误差会明显增大，结果仅供参考。';
+  } else {
+    out.region = 'turbulent';
+    out.label = '湍流';
+    out.ok = false;
+    out.level = 'warn';
+    out.msg = 'Re ≥ 4000，流动已完全湍流，速度剖面不再是抛物面，'
+            + '泊肃叶公式 Q = πR⁴ΔP/(8μL) 不再适用，程序计算值与真实流动的偏差会很大。';
+  }
+  return out;
+}
+
+/**
+ * 牛顿黏性实验：板间距过大时速度梯度过小，力的量级偏低。
+ */
+function checkNewtonApplicability(v, mu, z_mm, A) {
+  var z_m = z_mm / 1000;
+  var phy = PhysicsEngine.newtonViscosity(v, mu, z_mm, A);
+  var out = { grad: phy.grad, tau: phy.tau, F: phy.F, ok: true, level: 'info',
+              label: '正常', msg: '板间距适中，速度梯度明显，黏性力处于易于观测的量级。' };
+  if (z_mm > 20) {
+    out.ok = false;
+    out.level = 'info';
+    out.label = '板间距偏大';
+    out.msg = '当前板间距 ' + z_mm + ' mm 偏大（真实黏性实验通常在 0.1~5 mm），'
+            + '速度梯度仅 ' + phy.grad.toFixed(2) + ' s⁻¹，黏性力仅 ' + phy.F.toExponential(2) + ' N，'
+            + '数值偏小，不利于观察 F 随 z 变化的趋势。建议把板间距调小到 5 mm 以下。';
+  }
+  return out;
+}
+
+// ========================================
+// 适用性提示：渲染 + 挂载
+// ========================================
+
+/**
+ * 把检查结果渲染成提示横幅 HTML。
+ * @param {object} info  checkXxxApplicability() 的返回值
+ * @param {string} extra 附加说明（可选）
+ */
+function renderApplicabilityBanner(info, extra) {
+  if (!info) return '';
+  var lvl = info.level === 'warn' ? 'ap-warn' : (info.level === 'bad' ? 'ap-bad' : 'ap-info');
+  var icon = lvl === 'ap-info' ? 'ℹ️' : '⚠️';
+  var title = (info.label || '适用性提示');
+  // 分区判据用的是「按斯托克斯初估速度算出的 Re0」，收敛后的 Re 会略低，
+  // 两个都列出来，避免标题写 Re=597 却标注 Re≥800 造成困惑。
+  function fmtRe(x) {
+    return Math.abs(x) >= 10000 ? x.toExponential(2) : x.toFixed(x < 1 ? 4 : 1);
+  }
+  if (info.Re0 !== undefined && isFinite(info.Re0)) {
+    title += '　Re₀ = ' + fmtRe(info.Re0);
+    if (info.Re !== undefined && isFinite(info.Re) && Math.abs(info.Re0 - info.Re) / Math.max(Math.abs(info.Re0), 1e-30) > 0.02) {
+      title += '（收敛后 Re = ' + fmtRe(info.Re) + '）';
+    }
+  } else if (info.Re !== undefined && isFinite(info.Re)) {
+    title += '　Re = ' + fmtRe(info.Re);
+  }
+  var h = '<div class="applicability-banner ' + lvl + '">' +
+    '<span class="ap-icon">' + icon + '</span>' +
+    '<div class="ap-body">' +
+    '<div class="ap-title">' + title + '</div>' +
+    '<div>' + (info.msg || '') + (extra ? ' ' + extra : '') + '</div>' +
+    (info.formula ? '<span class="ap-formula">' + info.formula + '</span>' : '') +
+    '</div></div>';
+  return h;
+}
+
+/**
+ * 把适用性提示渲染到指定容器；容器不存在则自动创建。
+ * 位置：数据面板之后（dynHost 为参考节点）。
+ */
+function mountApplicabilityBanner(hostId, info, extra) {
+  var host = document.getElementById(hostId);
+  if (!host) return;
+  var html = renderApplicabilityBanner(info, extra);
+  if (!html) { host.innerHTML = ''; host.style.display = 'none'; return; }
+  host.innerHTML = html;
+  host.style.display = 'block';
+}
 
 // ========================================
 // 工具函数
@@ -2985,6 +3334,9 @@ const Navigation = {
     setTimeout(() => {
       AppState.currentPage = 'experiment';
       AppState.currentExperiment = expType;
+
+       // 优先恢复同一实验上次未导出的记录；没有记录才开始新的实验。
+       if (!LabRecorder.restore(expType)) LabRecorder.reset(expType);
         
       // 清除图表历史数据
       AppState.dataHistory = [];
@@ -2994,6 +3346,9 @@ const Navigation = {
       AppState.stokesBallY = 0;
       AppState.stokesBallV = 0;
       AppState.stokesBallDistance = 0;
+      AppState.stokesBallTime = 0;
+      AppState.stokesBallFd = 0;
+      AppState.stokesBallStartTime = null;
         
       // 清理之前的Canvas资源
       cleanupCanvas();
@@ -3002,6 +3357,7 @@ const Navigation = {
       document.getElementById('homePage').style.display = 'none';
       const experimentPage = document.getElementById('experimentPage');
       experimentPage.style.display = 'block';
+      requestAnimationFrame(syncSidebarHeaderHeight);
         
       // 添加淡入动画
       experimentPage.classList.add('fade-in');
@@ -3208,7 +3564,7 @@ function renderPrinciplePage() {
           <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">该公式表明：流体层间的内摩擦力（F）与<strong>动力粘度（η）</strong>、<strong>接触面积（A）</strong>及<strong>速度梯度（du/dz）</strong>三者成正比。η 反映流体自身的粘稠特性，A 反映层间接触范围，du/dz 反映层间速度变化的剧烈程度——三者共同决定了流体抵抗剪切变形的内摩擦力大小。</p>
           <p style="color: ${colors.textColor}; line-height: 1.9; font-size: 15px;">实验中，下板固定，上板以恒定速度（u）运动，带动相邻流体层运动，因流体粘性，各层流体速度从下板的0逐渐过渡到上板的u，形成连续的速度分布。通过改变u、z、η、A四个参数，观察流体位移轨迹及速度梯度的变化，验证粘性定律的适用性，明确各参数对流体流动特性的影响规律。</p>
           <div style="margin-top:12px;padding:10px 14px;background:rgba(0,212,255,0.06);border-radius:6px;border:1px dashed rgba(0,212,255,0.2);font-size:13px;color:${colors.titleColor};text-align:center;">
-            📐 横轴：流体微团位移 <b>x</b>　｜　纵轴：板间距 <b>z</b>　｜　虚线：流体层位移轨迹　｜　实线：稳态速度梯度趋势线
+            📐 横轴：流体微团位移 <b>x</b>　｜　纵轴：板间距 <b>z</b>　｜　蓝线：1 s 位移差　｜　θ 从 <b>z</b> 轴量起，θ 越大表示 <b>du/dz</b> 越大
           </div>
         </div>
 
@@ -3219,7 +3575,7 @@ function renderPrinciplePage() {
               <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">▲ u 增大</p>
               <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
                 <li>位移轨迹整体右移，流体层位移速率增大；</li>
-                <li>稳态速度梯度趋势线斜率减小，层间速度差减小；</li>
+                <li>蓝线相对 z 轴的夹角增大，速度梯度 du/dz 与层间速度差增大；</li>
                 <li>位移轨迹波动振幅增大，层间剪切效应增强。</li>
               </ol>
             </div>
@@ -3227,7 +3583,7 @@ function renderPrinciplePage() {
               <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">▼ u 减小</p>
               <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
                 <li>位移轨迹整体左移，流体层位移速率减小；</li>
-                <li>稳态速度梯度趋势线斜率增大，层间速度差增大；</li>
+                <li>蓝线相对 z 轴的夹角减小，速度梯度 du/dz 与层间速度差减小；</li>
                 <li>位移轨迹波动振幅减小，层间剪切效应减弱。</li>
               </ol>
             </div>
@@ -3241,7 +3597,7 @@ function renderPrinciplePage() {
               <p style="color:#00d4ff;font-weight:700;margin-bottom:6px;">▲ z 增大</p>
               <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
                 <li>位移曲线簇沿纵轴拉伸，分布变稀疏；</li>
-                <li>稳态速度梯度趋势线斜率减小，层间速度过渡更平缓；</li>
+                <li>蓝线相对 z 轴的夹角减小，速度梯度减小、层间速度过渡更平缓；</li>
                 <li>位移轨迹波动减弱，剪切效应减弱。</li>
               </ol>
             </div>
@@ -3249,7 +3605,7 @@ function renderPrinciplePage() {
               <p style="color:#ff9800;font-weight:700;margin-bottom:6px;">▼ z 减小</p>
               <ol style="color:${colors.textColor};font-size:14px;line-height:1.8;padding-left:18px;margin:0;">
                 <li>位移曲线簇沿纵轴压缩，分布变密集；</li>
-                <li>稳态速度梯度趋势线斜率增大，层间速度差增大；</li>
+                <li>蓝线相对 z 轴的夹角增大，速度梯度与层间速度差增大；</li>
                 <li>位移轨迹波动增强，剪切效应增强。</li>
               </ol>
             </div>
@@ -3788,8 +4144,10 @@ function renderLineSimPage() {
       <!-- 中央动画画布 -->
       <div class="canvas-area">
         <canvas id="simCanvas"></canvas>
-        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:10;">
-          <button class="ctrl-btn" id="btn-report" title="生成论文级别实验报告" style="background:#5b6abf;color:#fff;font-size:12px;padding:5px 16px;">📄 导出实验报告</button>
+        <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);z-index:10;white-space:nowrap;">
+          <button class="ctrl-btn" id="btn-report" title="根据你的实际操作生成实验报告：记录参数调节、仿真过程与流体切换，并绘制对应的实测曲线（按钮上的数字为已记录的数据点数）" style="background:#5b6abf;color:#fff;font-size:12px;padding:5px 16px;">📄 导出实验报告</button>
+          <button class="ctrl-btn" id="btn-export-csv" title="导出本次实验的原始记录 CSV" style="font-size:11px;padding:5px 9px;">CSV</button>
+          <button class="ctrl-btn" id="btn-export-json" title="导出可再次读取的完整实验记录 JSON" style="font-size:11px;padding:5px 9px;">JSON</button>
         </div>
       </div>
       
@@ -3798,6 +4156,7 @@ function renderLineSimPage() {
         <h3>实时数据</h3>
         <div id="reynoldsWarning" style="display: none; margin-bottom: 10px;"></div>
         <div id="dataContainer"></div>
+        <div id="taskGuideHost" style="margin-top:12px;"></div>
         
         <!-- 实时图表 -->
         <div class="chart-container">
@@ -3917,10 +4276,15 @@ function setupLineSimControls() {
 
       // 只有黏度滑块变化时更新拖尾长度
       if (param.id === 'viscosity') {
-        var minV = 0.00005, maxV = 2.0;
-        var normV = (value - minV) / (maxV - minV);
+        // 从参数定义读取量程，避免各实验黏度范围不同步（牛顿/泊肃叶/斯托克斯量程已各不相同）
+        var minV = (param.min !== undefined) ? param.min : 0.0005;
+        var maxV = (param.max !== undefined) ? param.max : 2.0;
+        var normV = Math.min(1, Math.max(0, (value - minV) / (maxV - minV)));
         AppState.trailLength = 2 + normV * 23;
       }
+
+      // 记录本次操作（供实验报告绘制实测曲线）
+      LabRecorder.onParamChange(param.id, value);
 
       // 实时重绘画布，让所有参数变化都能立即反映到动画中
       // 包括仿真运行时（特别是板间距、粘度等参数的视觉效果）
@@ -3928,6 +4292,11 @@ function setupLineSimControls() {
 
       // 泊肃叶实验：参数变化时同步更新3D场景（管道尺寸变化）
       if (AppState.currentExperiment === 'poiseuille' && poiseuille3DRenderer && poiseuille3DScene && poiseuille3DCamera) {
+        // 密度以粒子数量表达；按离散档位重建，既直观又避免每个滑块像素都创建对象。
+        if (param.id === 'density') {
+          const nextParticleCount = getPoiseuilleParticleCount(value);
+          if (nextParticleCount !== poiseuille3DParticleDensity) rebuildPoiseuilleFluidParticles();
+        }
         updatePoiseuille3D();
       }
 
@@ -3936,7 +4305,19 @@ function setupLineSimControls() {
         updateRealtimeChart();
       }
     });
+
+    // 松手时补记最终值，保证末态被记录
+    slider.addEventListener('change', (e) => {
+      LabRecorder.onParamChange(param.id, parseFloat(e.target.value), true);
+    });
   });
+
+  // 初始化操作记录器（进入实验即开始记录）
+  if (LabRecorder.exp !== AppState.currentExperiment) {
+    LabRecorder.reset(AppState.currentExperiment);
+    LabRecorder.logEvent('进入实验', (EXPERIMENTS[AppState.currentExperiment] || {}).name || '', '');
+  }
+  _updateReportBadge();
   
   // 模式切换
   document.querySelectorAll('.mode-btn').forEach(btn => {
@@ -3976,9 +4357,14 @@ function setupLineSimControls() {
   if (reportBtn) {
     reportBtn.addEventListener('click', generateReport);
   }
+  const csvBtn = document.getElementById('btn-export-csv');
+  if (csvBtn) csvBtn.addEventListener('click', function () { LabRecorder.exportData('csv'); });
+  const jsonBtn = document.getElementById('btn-export-json');
+  if (jsonBtn) jsonBtn.addEventListener('click', function () { LabRecorder.exportData('json'); });
   
   // 更新数据
   updateDataDisplay();
+  renderTaskGuide();
   
   // 使用ResizeObserver确保图表容器有尺寸后再初始化
   const chartContainer = document.querySelector('.chart-container');
@@ -4005,35 +4391,81 @@ function setupLineSimControls() {
 // ========================================
 // 应用流体预设
 // ========================================
+function resetStokesMotionForMediumChange() {
+  // 介质改变后，旧介质下的小球轨迹、速度和图表都不能继续沿用。
+  AppState.stokesBallDistance = 0;
+  AppState.stokesBallY = 0;
+  AppState.stokesBallV = 0;
+  AppState.stokesBallFd = 0;
+  AppState.stokesBallTime = 0;
+  AppState.stokesBallStartTime = null;
+  AppState.dataHistory = [];
+  AppState.timeHistory = [];
+
+  if (AppState.chartInstance) {
+    AppState.chartInstance.data.labels = [];
+    AppState.chartInstance.data.datasets.forEach(dataset => { dataset.data = []; });
+    AppState.chartInstance.update('none');
+  }
+}
+
 function applyFluidPreset(fluidName) {
   const fluid = FLUID_PRESETS[fluidName];
   if (!fluid) return;
-  
+
   const exp = EXPERIMENTS[AppState.currentExperiment];
-  
+  var clamped = [];
+
+  // 把预设值写进滑块，并按当前实验的量程做钳制，
+  // 避免预设值超出滑块 min/max 时被浏览器静默截断、而 physics 仍是旧值。
+  function setSlider(id, rawValue, displayId) {
+    const slider = document.getElementById(id);
+    if (!slider) return;
+    var v = parseFloat(rawValue);
+    if (!isFinite(v)) return;
+    var lo = parseFloat(slider.min), hi = parseFloat(slider.max);
+    if (isFinite(lo) && v < lo) { v = lo; clamped.push(id); }
+    if (isFinite(hi) && v > hi) { v = hi; clamped.push(id); }
+    slider.value = v;
+    const valueDisplay = document.getElementById(displayId);
+    if (valueDisplay) valueDisplay.textContent = formatScientific(v);
+  }
+
   exp.params.forEach(param => {
-    if (param.useFluidPreset) {
-      if (param.id === 'viscosity' || param.id === 'mu') {
-        const slider = document.getElementById('viscosity');
-        const valueDisplay = document.getElementById('viscosityValue');
-        if (slider) {
-          slider.value = fluid.mu;
-          valueDisplay.textContent = formatScientific(fluid.mu);
-        }
-      }
-      if (param.id === 'density' || param.id === 'rho' || param.id === 'fluidDensity') {
-        const sliderId = param.id === 'density' ? 'density' : 'fluidDensity';
-        const slider = document.getElementById(sliderId);
-        const valueDisplay = document.getElementById(`${sliderId}Value`);
-        if (slider) {
-          slider.value = fluid.rho;
-          valueDisplay.textContent = formatScientific(fluid.rho);
-        }
-      }
+    if (!param.useFluidPreset) return;
+    if (param.id === 'viscosity' || param.id === 'mu') {
+      setSlider('viscosity', fluid.mu, 'viscosityValue');
+    }
+    if (param.id === 'density' || param.id === 'rho' || param.id === 'fluidDensity') {
+      const sliderId = param.id === 'density' ? 'density' : 'fluidDensity';
+      setSlider(sliderId, fluid.rho, `${sliderId}Value`);
     }
   });
-  
+
+  if (AppState.currentExperiment === 'stokes') resetStokesMotionForMediumChange();
+  if (AppState.currentExperiment === 'poiseuille' && poiseuille3DScene) rebuildPoiseuilleFluidParticles();
+
   updateDataDisplay();
+  drawSimulationCanvas();
+
+  // 记录本次流体切换（报告据此生成流体对比图）
+  LabRecorder.onPreset(fluidName);
+
+  // 若预设值被量程截断，明确告知学生（否则会与「水/甘油」等名称对不上而产生误解）
+  if (clamped.length) {
+    var hint = document.getElementById('preset-clamp-hint');
+    if (!hint) {
+      hint = document.createElement('div');
+      hint.id = 'preset-clamp-hint';
+      hint.className = 'preset-clamp-hint';
+      var anchor = document.getElementById('presetGrid');
+      if (anchor && anchor.parentNode) anchor.parentNode.appendChild(hint);
+    }
+    hint.innerHTML = 'ℹ️ 「' + fluidName + '」的黏度 ' + formatScientific(fluid.mu)
+      + ' Pa·s 超出本实验滑块的量程，已钳制到可用边界；'
+      + '若要研究该流体，请换用黏度更低的流体或参考本区间外的理论推算。';
+    hint.style.display = 'block';
+  }
 }
 
 // 清理实验内部的事件监听器（不包括实验卡片）
@@ -4146,7 +4578,7 @@ function initPoiseuille3D(canvas) {
   // 创建渲染器
   poiseuille3DRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
   poiseuille3DRenderer.setSize(width, height);
-  poiseuille3DRenderer.setPixelRatio(window.devicePixelRatio);
+  poiseuille3DRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   poiseuille3DRenderer.setClearColor(bgColor, 1); // 设置清除颜色
   
   // 完全禁用控制器（锁定视角）
@@ -4269,7 +4701,6 @@ function createGlassPipe() {
     roughness: 0.9,  // 非常高粗糙度，几乎无反光（原0.3）
     metalness: 0.0,  // 无金属度
     transmission: 0.4,  // 降低透光率，让管壁更明显（原0.55）
-    thickness: 0.8,     // 增加玻璃厚度（原0.5）
     ior: 1.5,           // 折射率
     envMapIntensity: 0.0,  // 完全关闭环境光反射（原0.5）
     clearcoat: 0.0,  // 完全关闭清漆层（原0.3）
@@ -4281,17 +4712,52 @@ function createGlassPipe() {
   poiseuille3DScene.add(poiseuille3DPipe);
 }
 
+// 把跨度很大的物理密度映射为有限、可读的粒子密度：气体明显稀疏，液体明显稠密。
+function getPoiseuilleParticleCount(density) {
+  const rho = Math.max(0.05, Number(density) || 0.05);
+  const minLog = Math.log10(0.05);
+  const maxLog = Math.log10(1500);
+  const ratio = Math.min(1, Math.max(0, (Math.log10(rho) - minLog) / (maxLog - minLog)));
+  const lowPower = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+  const minCount = lowPower ? 48 : 64;
+  const maxCount = lowPower ? 128 : 216;
+  // 以 8 个粒子为一档，正好保持各同心层数量均匀。
+  return Math.max(8, Math.round((minCount + ratio * (maxCount - minCount)) / 8) * 8);
+}
+
+function clearPoiseuilleFluidParticles() {
+  poiseuille3DParticles.forEach(particle => {
+    if (poiseuille3DScene) poiseuille3DScene.remove(particle);
+    particle.geometry.dispose();
+    particle.material.dispose();
+  });
+  poiseuille3DParticles = [];
+  poiseuille3DInitialParticlePositions = [];
+  poiseuille3DParticleDensity = null;
+}
+
+function rebuildPoiseuilleFluidParticles() {
+  if (!poiseuille3DScene) return;
+  clearPoiseuilleFluidParticles();
+  createFluidParticles();
+  if (poiseuille3DRenderer && poiseuille3DCamera) {
+    poiseuille3DRenderer.render(poiseuille3DScene, poiseuille3DCamera);
+  }
+}
+
 // 创建流体粒子（符合泊肃叶定律：中间快，边缘慢，横向流动）
 function createFluidParticles() {
-  const particleCount = 500; // 增加粒子数量以更好显示层流效果
+  const params = getParamValues();
+  const particleCount = getPoiseuilleParticleCount(params.density);
   const pipeLength = 4;  // 管道长度（横向，沿X轴）
   const pipeRadius = 0.47; // 略小于管道内径（0.5 - 0.03 = 0.47）
   
   // 层流效果：创建多个同心圆层
   const layers = 8; // 8个同心圆层
-  const particlesPerLayer = Math.floor(particleCount / layers);
+  const particlesPerLayer = Math.max(1, Math.round(particleCount / layers));
   
   poiseuille3DParticles = [];
+  poiseuille3DParticleDensity = particlesPerLayer * layers;
   
   for (let layer = 0; layer < layers; layer++) {
     // 计算当前层的半径（从中心到管壁均匀分布，留出适当余量）
@@ -4404,13 +4870,7 @@ function cleanupPoiseuille3D() {
   }
   
   // 清理粒子
-  poiseuille3DParticles.forEach(particle => {
-    poiseuille3DScene.remove(particle);
-    particle.geometry.dispose();
-    particle.material.dispose();
-  });
-  poiseuille3DParticles = [];
-  poiseuille3DInitialParticlePositions = [];  // 清空初始位置
+  clearPoiseuilleFluidParticles();
   
   // 清理管道
   if (poiseuille3DPipe) {
@@ -4795,7 +5255,7 @@ function drawNewtonSimulation(w, h, isDark) {
   const MARGIN_RIGHT = Math.max(45, Math.round(100 * scale));
   const MARGIN_TOP = Math.max(25, Math.round(60 * scale));
   const MARGIN_BOTTOM = Math.max(55, Math.round(120 * scale));
-  const MAX_DISTANCE_MM = 50;  // mm（与滑块最大值对应）
+  const MAX_DISTANCE_MM = 10;  // mm（与滑块最大值对应）
   const GRID_LINES = 5;  // 竖直网格线数量，与x轴刻度对应（6条线：0~5）
   const NUM_LAYERS = 10; // 固定分层数，不受板面积影响
   
@@ -4818,10 +5278,11 @@ function drawNewtonSimulation(w, h, isDark) {
   const area = params.area || 0.1;
   const distance = (params.distance || 10) / 1000;  // 将 mm 转换为 m
   // 根据板间距动态调整动画中的板距离（视觉效果）
-  // distance范围：1-50mm，映射到动画中的高度：30%-90%的画布高度
-  const minDistance = 1;  // mm
-  const maxDistance = 50;  // mm
-  const normalizedDistance = (params.distance - minDistance) / (maxDistance - minDistance);  // 0~1
+  // distance范围：0.2-10mm，映射到动画中的高度：30%-90%的画布高度
+  const minDistance = 0.2;  // mm
+  const maxDistance = 10;  // mm
+  const normalizedDistance = Math.min(1, Math.max(0,
+    (params.distance - minDistance) / (maxDistance - minDistance)));  // 0~1
   const minCanvasHeight = ch * 0.3;  // 最小高度：30%画布
   const maxCanvasHeight = ch * 0.9;  // 最大高度：90%画布
   const animatedHeight = minCanvasHeight + normalizedDistance * (maxCanvasHeight - minCanvasHeight);
@@ -4887,7 +5348,7 @@ function drawNewtonSimulation(w, h, isDark) {
   }
   
   canvasCtx.textAlign = 'right';
-  // Y轴刻度：板间距 0~50 mm
+  // Y轴刻度：板间距 0~10 mm
   for (let i = 0; i <= 5; i++) {
     const valMM = (i / 5) * MAX_DISTANCE_MM;  // mm单位
     const y = dynamicSy + dynamicCh - (i / 5) * dynamicCh;
@@ -4961,10 +5422,13 @@ function drawNewtonSimulation(w, h, isDark) {
   }
   
   // 计算粘度视觉因子（线性均匀分布）
-  // 粘度范围：0.00005 ~ 2.0 Pa·s
-  const minViscosity = 0.00005;
-  const maxViscosity = 2.0;
-  const normalizedViscosity = (viscosity - minViscosity) / (maxViscosity - minViscosity);  // 线性归一化到 0~1
+  // 粘度量程从当前实验的参数定义读取（牛顿/泊肃叶/斯托克斯量程不同）
+  const _curParams = (EXPERIMENTS[AppState.currentExperiment] || {}).params || [];
+  const _muParam = _curParams.filter(function (p) { return p.id === 'viscosity'; })[0];
+  const minViscosity = (_muParam && _muParam.min !== undefined) ? _muParam.min : 0.0005;
+  const maxViscosity = (_muParam && _muParam.max !== undefined) ? _muParam.max : 2.0;
+  const normalizedViscosity = Math.min(1, Math.max(0,
+    (viscosity - minViscosity) / (maxViscosity - minViscosity)));  // 线性归一化到 0~1
 
   // 拖尾长度：从AppState读取（仅黏度滑块变化时更新）
   const trailLength = AppState.trailLength || 2;
@@ -5040,7 +5504,7 @@ function drawNewtonSimulation(w, h, isDark) {
     canvasCtx.globalAlpha = 1.0;
   }
   
-  // 12. 速度梯度指示线（蓝色虚线，显示速度分布）
+  // 12. 速度梯度指示线（蓝色虚线，显示 1 s 内由底板到上板的位移差）
   // 上端：最上层（第0层）第一个小球（pi=0）
   const topLayerV = velocity * VELOCITY_SCALE_FACTOR;  // 最上层速度（像素/秒，放大5倍）
   const topParticleY = dynamicSy;  // 最上层y坐标
@@ -5119,34 +5583,37 @@ function drawNewtonSimulation(w, h, isDark) {
     const distanceM = (params.distance || 10) / 1000;  // 板间距（米）
     const velocityGradient = velocity / distanceM;  // 速度梯度 (s⁻¹)
     
-    // 计算虚线与x轴的夹角
-    const deltaX = topParticleX - bottomParticleX;  // x方向的差值
-    const deltaY = bottomParticleY - topParticleY;  // y方向的差值（Canvas坐标系，向下为正）
-    const angleRad = Math.atan2(Math.abs(deltaY), Math.abs(deltaX));  // 夹角（弧度）
-    const angleDeg = angleRad * (180 / Math.PI);  // 夹角（度）
+    // 从竖直 z 轴量角：在板间距固定时，速度梯度越大，位移差越大、角度越大。
+    // 这样角度方向与 du/dz 的大小一致，而不是使用会反向变化的“相对 x 轴”角度。
+    const deltaX = topParticleX - bottomParticleX;
+    const deltaY = topParticleY - bottomParticleY;
+    const lineAngle = Math.atan2(deltaY, deltaX);  // 从底端指向上端，范围[-π/2, 0]
+    const verticalAxisAngle = -Math.PI / 2;
+    const angleRad = Math.min(Math.PI / 2, Math.max(0, lineAngle - verticalAxisAngle));
+    const angleDeg = angleRad * (180 / Math.PI);
     
     // 绘制夹角弧线
     const arcRadius = 30;  // 弧线半径
-    const startAngle = 0;  // x轴方向（0度）
-    const endAngle = -angleRad;  // 虚线方向（Canvas坐标系，向上为负）
+    const startAngle = verticalAxisAngle;  // z轴正向（Canvas坐标系向上）
+    const endAngle = lineAngle;
     
     canvasCtx.strokeStyle = isDark ? 'rgba(255, 165, 0, 0.8)' : 'rgba(243, 156, 18, 0.8)';
     canvasCtx.lineWidth = 2;
     canvasCtx.setLineDash([3, 3]);
     canvasCtx.beginPath();
-    canvasCtx.arc(bottomParticleX, bottomParticleY, arcRadius, endAngle, startAngle, false);
+    canvasCtx.arc(bottomParticleX, bottomParticleY, arcRadius, startAngle, endAngle, false);
     canvasCtx.stroke();
     canvasCtx.setLineDash([]);
     
     // 显示夹角数值（在弧线中间位置）
-    const labelAngle = endAngle / 2;  // 弧线的中间角度
+    const labelAngle = (startAngle + endAngle) / 2;  // 弧线的中间角度
     const labelX = bottomParticleX + (arcRadius + 15) * Math.cos(labelAngle);
     const labelY = bottomParticleY + (arcRadius + 15) * Math.sin(labelAngle);
     
     canvasCtx.fillStyle = isDark ? 'rgba(255, 165, 0, 0.9)' : 'rgba(243, 156, 18, 0.9)';
     canvasCtx.font = 'bold 11px Microsoft YaHei';
     canvasCtx.textAlign = 'center';
-    canvasCtx.fillText(`θ = ${angleDeg.toFixed(1)}°`, labelX, labelY);
+    canvasCtx.fillText(`θ（相对 z 轴）= ${angleDeg.toFixed(1)}°`, labelX, labelY);
     
     // 显示速度梯度信息（在虚线中间）
     canvasCtx.fillStyle = isDark ? 'rgba(0, 212, 255, 0.8)' : 'rgba(26, 60, 124, 0.8)';
@@ -5163,29 +5630,12 @@ function drawStokesSimulation(w, h, isDark) {
   
   // 物理计算
   const calc = PhysicsEngine.stokes(params.ballRadius, params.ballDensity, params.fluidDensity, params.viscosity);
-  const vt = (isNaN(calc.vt) || !isFinite(calc.vt)) ? 0 : Math.max(calc.vt, 0);
-  
-  // 计算时间常数 τ = m / (6πμr)
-  let tau;
-  if (params.viscosity > 0 && params.ballRadius > 0) {
-    tau = calc.mass / (6 * Math.PI * params.viscosity * params.ballRadius);
-  } else {
-    tau = 1.0;
-  }
-  
-  // 动态计算容器高度：确保小球有足够距离达到终端速度
-  // 小球达到99%终端速度需要约5τ的时间
-  // 在这5τ时间内，小球下落的距离约为：vt * 5τ - vt * τ * (1 - e^(-5))
-  // 简化计算：使用 vt * 5τ 作为保守估计，再乘以1.5作为安全余量
-  const timeToReachTerminal = 5 * tau;  // 达到99%终端速度所需时间
-  const distanceToTerminal = vt * timeToReachTerminal;  // 达到终端速度时下落的距离
-  const CONTAINER_REAL_HEIGHT = Math.max(distanceToTerminal * 1.5, 5);  // 至少5米，最多根据需要增加
-  
-  // 计算动画时间加速因子：确保小球在合理时间内下落到底部
-  // 目标：小球在10-20秒内下落到底部（良好的视觉体验）
-  const targetFallTime = 15;  // 目标下落时间（秒）
-  const actualFallTime = CONTAINER_REAL_HEIGHT / (vt || 0.001);  // 实际下落时间（秒）
-  const timeAcceleration = Math.max(1, actualFallTime / targetFallTime);  // 时间加速因子（至少1倍）
+  const responseModel = getStokesResponseModel(params, calc);
+  // 预留约 5 个响应时间常数的空间；低速介质至少使用 5 m 观察管。
+  const distanceToTerminal = responseModel.distanceAt(5 * responseModel.tau);
+  const CONTAINER_REAL_HEIGHT = Math.max(distanceToTerminal * 1.5, 5);
+  const actualFallTime = CONTAINER_REAL_HEIGHT / Math.max(calc.vt || 0, 0.001);
+  const timeAcceleration = Math.max(1, actualFallTime / STOKES_TARGET_FALL_TIME);
   
   // 配置参数 - 2.5D视角
   var CONTAINER_WIDTH = Math.min(w * 0.8, 500);  // 容器宽度，自适应画布
@@ -5476,12 +5926,12 @@ function drawStokesSimulation(w, h, isDark) {
     canvasCtx.fillText('✓ 已到达底部', cx, sy + CONTAINER_HEIGHT - 20);
   }
   
-  // 12. 显示时间加速信息（如果加速因子>1）
+  // 12. 显示固定教学时长，明确它仅压缩画面时间。
   if (timeAcceleration > 1.5) {
     canvasCtx.fillStyle = isDark ? 'rgba(255, 149, 0, 0.8)' : 'rgba(243, 156, 18, 0.8)';
     canvasCtx.font = 'bold 11px Microsoft YaHei';
     canvasCtx.textAlign = 'center';
-    canvasCtx.fillText(`⏱ 动画加速: ${timeAcceleration.toFixed(1)}x`, cx, sy - 10);
+    canvasCtx.fillText(`⏱ 教学演示：约 ${STOKES_TARGET_FALL_TIME} 秒完成下落`, cx, sy - 10);
   }
 }
 
@@ -5723,21 +6173,12 @@ function updateDataDisplay() {
     `;
   }).join('');
 
-  // 斯托克斯实验：显示阻力分区提示
-  if (exp === 'stokes' && results.dragFormula) {
-    var df = results.dragFormula;
-    var hints = {
-      'stokes': { bg: 'rgba(0,255,0,0.08)', border: 'rgba(0,255,0,0.3)', color: '#00e676',
-        html: '🟢 <b>斯托克斯区</b> (Re<0.1)<br>F<sub>d</sub> = 6πμrv　｜　Cd = 24/Re' },
-      'oseen': { bg: 'rgba(0,200,255,0.08)', border: 'rgba(0,200,255,0.3)', color: '#00c8ff',
-        html: '🔵 <b>Oseen 修正区</b> (0.1≤Re<1)<br>F<sub>d</sub> = 6πμrv × (1 + 3Re/8)' },
-      'schiller-naumann': { bg: 'rgba(255,152,0,0.08)', border: 'rgba(255,152,0,0.3)', color: '#ff9800',
-        html: '🟠 <b>Schiller-Naumann 过渡区</b> (1≤Re<800)<br>F<sub>d</sub> = 6πμrv × (1 + 0.15Re<sup>0.687</sup>)' },
-      'newton': { bg: 'rgba(255,80,80,0.08)', border: 'rgba(255,80,80,0.3)', color: '#ff5050',
-        html: '🔴 <b>牛顿阻力区</b> (Re≥800)<br>F<sub>d</sub> = ½ρ<sub>f</sub>·0.44·πr²·v²　｜　Cd ≈ 0.44' }
-    };
-    var h = hints[df] || hints['stokes'];
-    container.innerHTML += '<div style="margin-top:6px;padding:8px 10px;background:' + h.bg + ';border:1px solid ' + h.border + ';border-radius:6px;font-size:0.68rem;color:' + h.color + ';text-align:center;line-height:1.6;">' + h.html + '</div>';
+  renderLearningFocus(exp, results);
+
+  // 斯托克斯实验：数据面板、3D 页面、AI 和报告全部复用同一套适用性判定。
+  if (exp === 'stokes') {
+    var stokesInfo = checkStokesApplicability(params.ballRadius, params.ballDensity, params.fluidDensity, params.viscosity);
+    container.innerHTML += renderApplicabilityBanner(stokesInfo);
   }
 
   // 泊肃叶实验：检查雷诺数并显示警告
@@ -5757,6 +6198,17 @@ function updateDataDisplay() {
       }
     }
   }
+}
+
+function renderLearningFocus(exp, results) {
+  var host = document.getElementById('taskGuideHost');
+  if (!host) return;
+  var old = host.querySelector('.learning-focus');
+  if (old) old.remove();
+  var points = typeof LabRecorder !== 'undefined' ? LabRecorder.totalPoints() : 0;
+  var status = AppState.simulationRunning && !AppState.simulationPaused ? '🟢 正在采样' : (points >= 5 ? '✅ 已满足报告条件' : '🟡 准备实验');
+  var text = exp === 'newton' ? '关注 F = ηA·U/z：每次只改变一个参数，观察黏性力的同步变化。' : exp === 'poiseuille' ? '关注 Q ∝ ΔP·R⁴/(μL)：管径变化最敏感，先确认 Re 仍在层流范围。' : '关注 vₜ ∝ r²/μ：只有 Re < 0.1 时纯斯托克斯公式严格适用。';
+  host.insertAdjacentHTML('afterbegin', '<div class="card learning-focus" style="padding:10px;margin-bottom:10px;border-left:4px solid var(--accent);font-size:.76rem;"><b>' + status + '</b><div style="margin-top:5px;line-height:1.55;">' + text + '</div><div style="margin-top:5px;color:var(--text-secondary);">已记录 ' + points + ' 个数据点 · ' + (points >= 5 ? '可以导出数据驱动报告' : '建议至少记录 5 个不同条件') + '</div></div>');
 }
 
 function getUnit(key) {
@@ -6021,6 +6473,7 @@ function updateChartData() {
 function startSimulation() {
   if (AppState.simulationRunning && AppState.simulationPaused) {
     AppState.simulationPaused = false;
+    LabRecorder.onSimStart();
     runSimulation();
     return;
   }
@@ -6056,12 +6509,15 @@ function startSimulation() {
     AppState.stokesBallDistance = 0;
     AppState.stokesBallY = 0;
     AppState.stokesBallV = 0;
+    AppState.stokesBallTime = 0;
+    AppState.stokesBallFd = 0;
     AppState.stokesBallStartTime = null;
   }
   
   AppState.simulationRunning = true;
   AppState.simulationPaused = false;
   AppState._lastFrameTs = performance.now();
+  LabRecorder.onSimStart();
   runSimulation();
 }
 
@@ -6101,28 +6557,23 @@ function updateSimParticles(dt) {
     });
   } else if (exp === "stokes") {
     // Stokes ball physics
-    if (!AppState.stokesBallStartTime) AppState.stokesBallStartTime = AppState.simTime;
+    if (AppState.stokesBallStartTime === null) AppState.stokesBallStartTime = AppState.simTime;
     const params = getParamValues();
     const calc = PhysicsEngine.stokes(params.ballRadius, params.ballDensity, params.fluidDensity, params.viscosity);
-    const vt = calc.vt || 0;
-    const tau = (calc.mass || 0.001) / (6 * Math.PI * (params.viscosity || 0.001) * (params.ballRadius || 0.001));
+    const responseModel = getStokesResponseModel(params, calc);
     
-    // 计算时间加速因子（与drawStokesSimulation保持一致）
-    const timeToReachTerminal = 5 * tau;
-    const distanceToTerminal = vt * timeToReachTerminal;
+    // 视觉位置压缩到固定教学时长；物理速度与线图时间仍使用未压缩的真实时间。
+    const distanceToTerminal = responseModel.distanceAt(5 * responseModel.tau);
     const CONTAINER_REAL_HEIGHT = Math.max(distanceToTerminal * 1.5, 5);
-    const targetFallTime = 15;
-    const actualFallTime = CONTAINER_REAL_HEIGHT / (vt || 0.001);
-    const timeAcceleration = Math.max(1, actualFallTime / targetFallTime);
-    
-    // 应用时间加速后的下落时间
-    const ballFallTime = (AppState.simTime - AppState.stokesBallStartTime) * timeAcceleration;
-    
-    AppState.stokesBallV = vt * (1 - Math.exp(-ballFallTime / Math.max(tau, 0.0001)));
-    AppState.stokesBallDistance = vt * (ballFallTime - tau * (1 - Math.exp(-ballFallTime / Math.max(tau, 0.0001))));
-    
-    // 计算归一化位置（0~1，从顶部开始）
-    AppState.stokesBallY = Math.max(0, Math.min(AppState.stokesBallDistance / CONTAINER_REAL_HEIGHT, 1.0));
+    const actualFallTime = CONTAINER_REAL_HEIGHT / Math.max(calc.vt || 0, 0.001);
+    const timeAcceleration = Math.max(1, actualFallTime / STOKES_TARGET_FALL_TIME);
+    const physicalFallTime = Math.max(0, AppState.simTime - AppState.stokesBallStartTime);
+    AppState.stokesBallTime = physicalFallTime;
+    AppState.stokesBallV = responseModel.velocityAt(physicalFallTime);
+    AppState.stokesBallDistance = responseModel.distanceAt(physicalFallTime);
+
+    const visualDistance = responseModel.distanceAt(physicalFallTime * timeAcceleration);
+    AppState.stokesBallY = Math.max(0, Math.min(visualDistance / CONTAINER_REAL_HEIGHT, 1.0));
   }
 }
 
@@ -6136,11 +6587,9 @@ function runSimulation(ts) {
   AppState._lastFrameTs = now;
   if (realDt <= 0 || isNaN(realDt)) realDt = 0.016;
   AppState.simTime += realDt;
-  
-  updateDataDisplay();
-  
-  // 更新实时图表
-  updateRealtimeChart();
+
+  // 先推进物理状态，避免图表和报告总是记录上一帧的速度。
+  updateSimParticles(realDt);
   
   // 更新斯托克斯阻力（用于实时显示）
   if (AppState.currentExperiment === 'stokes') {
@@ -6149,8 +6598,10 @@ function runSimulation(ts) {
     AppState.stokesBallFd = PhysicsEngine.stokesDrag(params.viscosity, params.ballRadius, AppState.stokesBallV, params.fluidDensity);
   }
   
-  // 更新粒子位置（所有实验）
-  updateSimParticles(realDt);
+  // 采样和界面都读取刚更新的物理状态。
+  LabRecorder.onSimFrame();
+  updateDataDisplay();
+  updateRealtimeChart();
   
   // 绘制动画
   const exp = AppState.currentExperiment;
@@ -6170,6 +6621,7 @@ function runSimulation(ts) {
 
 function pauseSimulation() {
   AppState.simulationPaused = true;
+  LabRecorder.onSimPause();
 }
 
 function resetSimulation() {
@@ -6183,6 +6635,8 @@ function resetSimulation() {
   AppState.stokesBallDistance = 0;  // 初始下落距离0米
   AppState.stokesBallY = 0;  // 初始位置在顶部
   AppState.stokesBallV = 0;
+  AppState.stokesBallTime = 0;
+  AppState.stokesBallFd = 0;
   AppState.stokesBallStartTime = null;  // 重置小球开始时间
   AppState.newtonGradientLineStartTime = null;  // 重置牛顿实验虚线开始时间
   AppState.trailLength = 2;  // 重置拖尾长度
@@ -6237,6 +6691,9 @@ function resetSimulation() {
     playPauseBtn.innerHTML = '▶ 开始';
     playPauseBtn.className = 'ctrl-btn play-pause';
   }
+
+  // 重置即清空本次实验的操作记录
+  LabRecorder.onSimReset();
 }
 
 // ========================================
@@ -6349,9 +6806,11 @@ function checkCompReynoldsWarning() {
     });
   } else if (exp === 'stokes') {
     ['A','B','C'].forEach(function(k) {
-      var phy = compStokesPhysics(compParams[k] || {});
-      if (phy.Re > 1) {
-        warnings.push('模拟 ' + k + ': 雷诺数 Re = ' + phy.Re.toFixed(3) + ' > 1，不满足层流条件，斯托克斯定律不适用');
+      var p = compParams[k] || {};
+      var info = checkStokesApplicability(p.radius, p.rhop, p.rhof, p.viscosity, p.g);
+      if (!info.ok) {
+        var reText = isFinite(info.Re0) ? info.Re0.toFixed(info.Re0 < 1 ? 4 : 1) : '—';
+        warnings.push('模拟 ' + k + '：' + info.label + '（Re₀ = ' + reText + '）。' + info.msg);
       }
     });
   }
@@ -6484,20 +6943,20 @@ function buildCompareUI() {
 
   var paramDefs = {
     newton: [
-      {id:'visc', label:'η', min:'0.001', max:'2', step:'0.001', unit:'Pa·s', key:'viscosity'},
-      {id:'vel', label:'U', min:'0.01', max:'1', step:'0.01', unit:'m/s', key:'velocity'},
-      {id:'spac', label:'z', min:'1', max:'50', step:'1', unit:'mm', key:'spacing'},
-      {id:'area', label:'A', min:'0.01', max:'1.0', step:'0.01', unit:'m²', key:'area'}
+      {id:'visc', label:'η', min:'0.0005', max:'2', step:'0.0005', unit:'Pa·s', key:'viscosity'},
+      {id:'vel', label:'U', min:'0.05', max:'1', step:'0.05', unit:'m/s', key:'velocity'},
+      {id:'spac', label:'z', min:'0.2', max:'10', step:'0.1', unit:'mm', key:'spacing'},
+      {id:'area', label:'A', min:'0.01', max:'0.5', step:'0.01', unit:'m²', key:'area'}
     ],
     poiseuille: [
-      {id:'radius', label:'R', min:'0.0005', max:'0.005', step:'0.0001', unit:'m', key:'radius'},
+      {id:'radius', label:'R', min:'0.0002', max:'0.005', step:'0.0001', unit:'m', key:'radius'},
       {id:'length', label:'L', min:'0.1', max:'2', step:'0.05', unit:'m', key:'length'},
-      {id:'dp', label:'ΔP', min:'102', max:'105', step:'0.01', unit:'Pa', key:'dp'},
-      {id:'visc', label:'μ', min:'0.001', max:'2', step:'0.001', unit:'Pa·s', key:'viscosity'}
+      {id:'dp', label:'ΔP', min:'50', max:'10000', step:'10', unit:'Pa', key:'dp'},
+      {id:'visc', label:'μ', min:'0.00005', max:'2', step:'0.00005', unit:'Pa·s', key:'viscosity'}
     ],
     stokes: [
-      {id:'radius', label:'r', min:'0.001', max:'0.008', step:'0.0001', unit:'m', key:'radius'},
-      {id:'visc', label:'μ', min:'0.4', max:'2', step:'0.01', unit:'Pa·s', key:'viscosity'}
+      {id:'radius', label:'r', min:'0.0002', max:'0.003', step:'0.0001', unit:'m', key:'radius'},
+      {id:'visc', label:'μ', min:'0.00005', max:'2', step:'0.00005', unit:'Pa·s', key:'viscosity'}
     ]
   };
   var dataDefs = {
@@ -6513,9 +6972,10 @@ function buildCompareUI() {
   html += '<div class="card" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:8px 14px;border-radius:8px;">' +
     '<span style="font-size:1.05rem;font-weight:700;color:var(--cmp-accent, #00d4ff);">' + labels[exp] + ' — 三组参数对比</span>' +
     '<div style="display:flex;gap:8px;">' +
-      '<button id="compPlayPauseBtn" onclick="toggleCompAnim()" style="padding:5px 14px;border:1px solid #00e676;border-radius:6px;background:#00e676;color:#fff;cursor:pointer;font-size:0.82rem;font-family:inherit;">▶ 开始</button>' +
-      '<button onclick="resetCompAnimFull()" style="padding:5px 14px;border:1px solid #ff4d4d;border-radius:6px;background:#ff4d4d;color:#fff;cursor:pointer;font-size:0.82rem;font-family:inherit;">↺ 重置</button>' +
-      '<button onclick="toggleCompareMode()" style="padding:5px 14px;border:1px solid rgba(0,212,255,0.4);border-radius:6px;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;font-size:0.82rem;font-family:inherit;" onmouseover="this.style.background=\'rgba(0,212,255,0.25)\';" onmouseout="this.style.background=\'rgba(0,212,255,0.1)\';">← 返回</button>' +
+       '<button id="compPlayPauseBtn" onclick="toggleCompAnim()" style="padding:5px 14px;border:1px solid #00e676;border-radius:6px;background:#00e676;color:#fff;cursor:pointer;font-size:0.82rem;font-family:inherit;">▶ 开始</button>' +
+       '<button onclick="resetCompAnimFull()" style="padding:5px 14px;border:1px solid #ff4d4d;border-radius:6px;background:#ff4d4d;color:#fff;cursor:pointer;font-size:0.82rem;font-family:inherit;">↺ 重置</button>' +
+       '<button onclick="generateCompareReport()" style="padding:5px 14px;border:1px solid #5b6abf;border-radius:6px;background:#5b6abf;color:#fff;cursor:pointer;font-size:0.82rem;font-family:inherit;">📄 导出对比报告</button>' +
+       '<button onclick="toggleCompareMode()" style="padding:5px 14px;border:1px solid rgba(0,212,255,0.4);border-radius:6px;background:rgba(0,212,255,0.1);color:#00d4ff;cursor:pointer;font-size:0.82rem;font-family:inherit;" onmouseover="this.style.background=\'rgba(0,212,255,0.25)\';" onmouseout="this.style.background=\'rgba(0,212,255,0.1)\';">← 返回</button>' +
     '</div>' +
     '</div>';
 
@@ -7304,10 +7764,6 @@ function enterCompareMode() {
   var toggleBtn = document.getElementById('compareToggleBtn');
   if (toggleBtn) { toggleBtn.textContent = '🔀 关闭对比模式'; toggleBtn.classList.add('active'); }
 
-  // 隐藏实验报告按钮（对比模式下不可用）
-  var reportBtn = document.getElementById('btn-report');
-  if (reportBtn) reportBtn.style.display = 'none';
-
   // 添加 resize 监听
   window.addEventListener('resize', compResizeHandler);
 
@@ -7333,10 +7789,6 @@ function exitCompareMode() {
   var toggleBtn = document.getElementById('compareToggleBtn');
   if (toggleBtn) { toggleBtn.textContent = '🔀 开启对比模式'; toggleBtn.classList.remove('active'); }
 
-  // 恢复实验报告按钮
-  var reportBtn = document.getElementById('btn-report');
-  if (reportBtn) reportBtn.style.display = '';
-
   // 移除 resize 监听
   window.removeEventListener('resize', compResizeHandler);
 
@@ -7349,6 +7801,27 @@ function exitCompareMode() {
   console.log('[Compare] Exited compare mode');
 }
 
+function generateCompareReport() {
+  var exp = AppState.currentExperiment;
+  if (!exp) return;
+  var labels = { newton:'牛顿黏性定律', poiseuille:'泊肃叶定律', stokes:'斯托克斯定律' };
+  var calc = exp === 'newton' ? compNewtonPhysics : (exp === 'poiseuille' ? compPoiseuillePhysics : compStokesPhysics);
+  var result = exp === 'newton' ? [['剪切应力 τ (Pa)','shear'],['速度梯度 (s⁻¹)','gradient'],['黏性力 F (N)','F']] :
+    (exp === 'poiseuille' ? [['最大流速 (m/s)','umax'],['体积流量 Q (m³/s)','Q'],['雷诺数 Re','Re']] : [['终端速度 vt (m/s)','vt'],['阻力 Fd (N)','Fd'],['雷诺数 Re','Re']]);
+  var rows = '<tr><th>指标</th><th>A</th><th>B</th><th>C</th></tr>';
+  result.forEach(function(r) {
+    rows += '<tr><td>' + r[0] + '</td>' + ['A','B','C'].map(function(k) { var v = calc(compParams[k] || {})[r[1]]; return '<td>' + (Math.abs(v) < 0.001 && v !== 0 ? v.toExponential(4) : Number(v || 0).toFixed(4)) + '</td>'; }).join('') + '</tr>';
+  });
+  var params = ['A','B','C'].map(function(k) { return '<li><b>' + k + '</b>：' + Object.keys(compParams[k] || {}).filter(function(x){ return x.charAt(0) !== '_'; }).map(function(x){ return x + '=' + compParams[k][x]; }).join('，') + '</li>'; }).join('');
+  var canvas = document.getElementById('compare-canvas');
+  var visual = canvas ? canvas.toDataURL('image/png') : '';
+  var chart = exp === 'stokes' && compOverlayChart ? compOverlayChart.getDataURL({type:'png',pixelRatio:2,backgroundColor:'#fff'}) : '';
+  var win = window.open('', '_blank');
+  if (!win) { alert('报告窗口被浏览器拦截，请允许弹窗后重试。'); return; }
+  win.document.write('<!doctype html><meta charset="utf-8"><title>' + labels[exp] + '对比报告</title><style>body{font:14px Arial;padding:32px;line-height:1.7}table{border-collapse:collapse;width:100%;margin:16px 0}th,td{border:1px solid #999;padding:8px;text-align:center}th{background:#eef3ff}img{max-width:100%;margin:14px 0}button{padding:7px 14px}</style><h1>' + labels[exp] + ' — A/B/C 对比实验报告</h1><p>生成时间：' + new Date().toLocaleString('zh-CN') + '</p><h2>参数设置</h2><ul>' + params + '</ul><h2>计算结果</h2><table>' + rows + '</table><h2>对比可视化</h2>' + (chart ? '<img src="' + chart + '">' : '') + (visual ? '<img src="' + visual + '">' : '') + '<p><button onclick="window.print()">打印 / 导出 PDF</button></p>');
+  win.document.close();
+}
+
 function toggleCompareMode() {
   if (AppState.compareMode) {
     exitCompareMode();
@@ -7358,6 +7831,24 @@ function toggleCompareMode() {
 }
 
 // 切换操作指南展开/折叠
+var _TASK_STEPS = {
+  newton:['设定一个自变量（速度、间距或面积）','保持其余参数不变，记录至少 5 个数据点','导出报告并检查 F 与速度梯度的关系'],
+  poiseuille:['选择压强差、半径或黏度作为自变量','保持其余参数不变，记录至少 5 个数据点','确认 Re < 2000 后导出报告'],
+  stokes:['确认当前处于 Re < 0.1 的斯托克斯区','改变球半径或黏度，记录至少 5 个数据点','导出报告并说明适用性结论']
+};
+function renderTaskGuide() {
+  var host = document.getElementById('taskGuideHost'), exp = AppState.currentExperiment;
+  if (!host || !_TASK_STEPS[exp]) return;
+  var key = 'viscosity-simulator.task.v1.' + exp, done = {};
+  try { done = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+  host.innerHTML = '<div class="card" style="padding:10px;font-size:.76rem;"><b>🎯 实验任务清单</b>' + _TASK_STEPS[exp].map(function(s,i) {
+    return '<label style="display:block;margin-top:6px;cursor:pointer;"><input type="checkbox" data-task-step="'+i+'" '+(done[i]?'checked':'')+'> '+(i+1)+'. '+s+'</label>';
+  }).join('') + '<label style="display:block;margin-top:8px;border-top:1px solid var(--border);padding-top:7px;cursor:pointer;"><input type="checkbox" id="measurementModeToggle" '+(AppState.measurementMode?'checked':'')+'> 测量模式：加入 ±1.5% 仪器读数误差</label></div>';
+  host.querySelectorAll('[data-task-step]').forEach(function(el) { el.addEventListener('change', function(){ done[this.dataset.taskStep] = this.checked; try { localStorage.setItem(key, JSON.stringify(done)); } catch(e) {} }); });
+  var measure = document.getElementById('measurementModeToggle');
+  if (measure) measure.addEventListener('change', function(){ AppState.measurementMode = this.checked; });
+}
+
 function toggleGuide() {
   var guide = document.getElementById('operationGuide');
   if (guide) guide.classList.toggle('collapsed');
@@ -7507,6 +7998,656 @@ function setupEventListeners() {
 }
 
 // ========================================
+// 学生操作记录器（LabRecorder）
+// 记录真实操作过程与实测数据，实验报告据此绘制不同的函数图像
+// ========================================
+
+// 各实验的主响应量（因变量）
+var _LAB_RESP = {
+  newton:     { key: 'F',  sym: 'F',   name: '黏性力',   unit: 'N' },
+  poiseuille: { key: 'Q',  sym: 'Q',   name: '体积流量', unit: 'm\u00B3/s' },
+  stokes:     { key: 'vt', sym: 'v_t', name: '终端速度', unit: 'm/s' }
+};
+
+function _labClock(ts) {
+  var d = new Date(ts);
+  function p(n) { return n < 10 ? '0' + n : '' + n; }
+  return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+}
+
+// 固定伪随机扰动：同一操作得到同一读数，便于课堂复现；仅模拟仪器分辨率与读数误差。
+function _measureReading(value, seed) {
+  if (!AppState.measurementMode) return value;
+  var x = Math.sin(seed * 12.9898) * 43758.5453;
+  var deviation = (x - Math.floor(x) - 0.5) * 0.03; // ±1.5%
+  return value * (1 + deviation);
+}
+
+var LabRecorder = {
+  exp: null,
+  startTs: 0,
+  events: [],    // 非参数类操作日志（开始/暂停/重置/切换流体）
+  sweeps: {},    // paramId -> {id,name,symbol,unit,key,points:[{x,y,t}]}
+  runs: [],      // 运行段 -> {seq,t0,samples:[[t,v]]}
+  curRun: null,
+  presets: [],   // 流体切换记录
+  _lastSweepTs: {},
+  _lastSampleTs: 0,
+  _runSeq: 0,
+
+  reset: function (expType) {
+    this.exp = expType || AppState.currentExperiment || null;
+    this.startTs = Date.now();
+    this.events = [];
+    this.sweeps = {};
+    this.runs = [];
+    this.curRun = null;
+    this.presets = [];
+    this._lastSweepTs = {};
+    this._lastSampleTs = 0;
+    this._runSeq = 0;
+    _updateReportBadge();
+  },
+
+  ensure: function () {
+    if (this.exp !== AppState.currentExperiment) this.reset();
+    if (!this.startTs) this.startTs = Date.now();
+  },
+
+  paramDef: function (id) {
+    var e = EXPERIMENTS[this.exp || AppState.currentExperiment];
+    if (!e) return null;
+    for (var i = 0; i < e.params.length; i++) if (e.params[i].id === id) return e.params[i];
+    return null;
+  },
+
+  // 某参数对应的响应量（泊肃叶的密度只影响 Re，不影响 Q）
+  respKey: function (paramId) {
+    var exp = this.exp || AppState.currentExperiment;
+    if (exp === 'poiseuille' && paramId === 'density') return 'Re';
+    return (_LAB_RESP[exp] || { key: 'y' }).key;
+  },
+
+  respMeta: function (key) {
+    var exp = this.exp || AppState.currentExperiment;
+    if (key === 'Re') return { sym: 'Re', name: '雷诺数', unit: '' };
+    return _LAB_RESP[exp] || { sym: 'y', name: '响应量', unit: '' };
+  },
+
+  // 由参数集合计算稳态响应量
+  responseOf: function (p, key) {
+    var exp = this.exp || AppState.currentExperiment;
+    if (exp === 'newton') return PhysicsEngine.newtonViscosity(p.velocity, p.viscosity, p.distance, p.area).F;
+    if (exp === 'poiseuille') {
+      var c = PhysicsEngine.poiseuille(p.radius, p.length, p.pressure, p.viscosity, p.density);
+      return key === 'Re' ? c.Re : c.Q;
+    }
+    if (exp === 'stokes') return PhysicsEngine.stokes(p.ballRadius, p.ballDensity, p.fluidDensity, p.viscosity).vt;
+    return 0;
+  },
+
+  // 仿真过程中的瞬时量
+  instantOf: function () {
+    var exp = this.exp || AppState.currentExperiment;
+    var p = getParamValues();
+    if (exp === 'newton') return PhysicsEngine.newtonViscosity(p.velocity, p.viscosity, p.distance, p.area).F;
+    if (exp === 'poiseuille') return PhysicsEngine.poiseuille(p.radius, p.length, p.pressure, p.viscosity, p.density).Q;
+    if (exp === 'stokes') return AppState.stokesBallV || 0;
+    return 0;
+  },
+
+  logEvent: function (type, label, detail) {
+    this.ensure();
+    if (this.events.length < 200) {
+      this.events.push({ t: Date.now(), type: type, label: label || '', detail: detail || '' });
+    }
+  },
+
+  // 滑块调节：记录一组（参数值 → 响应量）实测点
+  onParamChange: function (paramId, value, force) {
+    this.ensure();
+    if (typeof value !== 'number' || isNaN(value)) return;
+    var now = Date.now();
+    if (!force && now - (this._lastSweepTs[paramId] || 0) < 60) return;
+    this._lastSweepTs[paramId] = now;
+
+    var key = this.respKey(paramId);
+    var p = getParamValues();
+    p[paramId] = value;
+    var y = _measureReading(this.responseOf(p, key), value + now / 1000);
+
+    var s = this.sweeps[paramId];
+    if (!s) {
+      var def = this.paramDef(paramId);
+      s = this.sweeps[paramId] = {
+        id: paramId,
+        name: def ? def.name : paramId,
+        symbol: def ? def.symbol : paramId,
+        unit: def ? def.unit : '',
+        key: key,
+        points: []
+      };
+    }
+    var pts = s.points;
+    if (pts.length >= 400) return;
+    if (pts.length && Math.abs(pts[pts.length - 1].x - value) < 1e-12) return;
+    // snap：记录该点时全部参数的取值，用于按「当时的实验条件」计算理论值
+    pts.push({ x: value, y: y, t: now, snap: _labClone(p) });
+    _updateReportBadge();
+  },
+
+  onPreset: function (name) {
+    this.ensure();
+    var key = this.respKey('viscosity');
+    this.presets.push({ name: name, t: Date.now(), y: this.responseOf(getParamValues(), key), key: key });
+    if (this.presets.length > 40) this.presets.shift();
+    this.logEvent('切换流体', name, '');
+    _updateReportBadge();
+  },
+
+  onSimStart: function () {
+    this.ensure();
+    this._runSeq = (this._runSeq || 0) + 1;
+    var run = { seq: this._runSeq, t0: AppState.simTime, start: Date.now(), samples: [] };
+    this.runs.push(run);
+    if (this.runs.length > 12) this.runs.shift();
+    this.curRun = run;
+    this.logEvent('开始仿真', '运行段 #' + run.seq, '');
+    _updateReportBadge();
+  },
+
+  onSimPause: function () {
+    if (this.curRun) { this.curRun.end = Date.now(); this.curRun = null; }
+    this.logEvent('暂停仿真', '', '');
+  },
+
+  onSimReset: function () {
+    var exp = this.exp || AppState.currentExperiment;
+    this.reset(exp);
+    this.logEvent('重置实验', '', '参数与记录已清空');
+  },
+
+  // 仿真采样（节流 80ms）
+  onSimFrame: function () {
+    if (!this.curRun) return;
+    var now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+    if (now - this._lastSampleTs < 80) return;
+    this._lastSampleTs = now;
+    var run = this.curRun;
+    var exp = this.exp || AppState.currentExperiment;
+    // 斯托克斯用物理下落时间，其余用仿真时间
+    var t = (exp === 'stokes' && typeof AppState.stokesBallTime === 'number')
+      ? AppState.stokesBallTime
+      : (AppState.simTime - run.t0);
+    run.samples.push([t, this.instantOf()]);
+    if (run.samples.length > 900) run.samples.shift();
+  },
+
+  totalPoints: function () {
+    var self = this;
+    var n = 0;
+    Object.keys(this.sweeps).forEach(function (k) { n += self.sweeps[k].points.length; });
+    this.runs.forEach(function (r) { n += r.samples.length; });
+    return n;
+  },
+
+  storageKey: function (exp) { return 'viscosity-simulator.lab-record.v1.' + (exp || this.exp || AppState.currentExperiment || 'unknown'); },
+  persist: function () {
+    try {
+      if (!this.exp || !window.localStorage) return;
+      var now = Date.now();
+      if (this._lastPersistTs && now - this._lastPersistTs < 500) return;
+      this._lastPersistTs = now;
+      localStorage.setItem(this.storageKey(), JSON.stringify({ exp:this.exp, startTs:this.startTs, events:this.events, sweeps:this.sweeps, runs:this.runs, presets:this.presets, runSeq:this._runSeq }));
+    } catch (e) { /* 配额不足或隐私模式不影响实验 */ }
+  },
+  restore: function (expType) {
+    try {
+      var raw = window.localStorage && localStorage.getItem(this.storageKey(expType));
+      if (!raw) return false;
+      var data = JSON.parse(raw);
+      if (!data || data.exp !== expType) return false;
+      this.exp = data.exp; this.startTs = data.startTs || Date.now(); this.events = data.events || [];
+      this.sweeps = data.sweeps || {}; this.runs = data.runs || []; this.presets = data.presets || [];
+      this.curRun = null; this._lastSweepTs = {}; this._lastSampleTs = 0; this._runSeq = data.runSeq || this.runs.length;
+      _updateReportBadge(); return true;
+    } catch (e) { return false; }
+  },
+  exportData: function (format) {
+    this.ensure();
+    var payload = { version:1, exportedAt:new Date().toISOString(), exp:this.exp, events:this.events, sweeps:this.sweeps, runs:this.runs, presets:this.presets };
+    var text;
+    if (format === 'csv') {
+      var rows = [['kind','parameter','x_or_time','response','timestamp','parameters']];
+      Object.keys(this.sweeps).forEach(function(k) { payload.sweeps[k].points.forEach(function(p) { rows.push(['sweep',k,p.x,p.y,new Date(p.t).toISOString(),JSON.stringify(p.snap || {})]); }); });
+      payload.runs.forEach(function(r) { r.samples.forEach(function(p) { rows.push(['run','#'+r.seq,p[0],p[1],r.start ? new Date(r.start).toISOString() : '','']); }); });
+      text = '\uFEFF' + rows.map(function(r) { return r.map(function(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n');
+    } else text = JSON.stringify(payload, null, 2);
+    var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], {type:format === 'csv' ? 'text/csv;charset=utf-8' : 'application/json;charset=utf-8'}));
+    a.download = '黏性实验记录_' + this.exp + '.' + format; a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  }
+};
+
+['reset','logEvent','onParamChange','onPreset','onSimStart','onSimPause','onSimReset','onSimFrame'].forEach(function(name) {
+  var original = LabRecorder[name];
+  LabRecorder[name] = function () { var result = original.apply(this, arguments); this.persist(); return result; };
+});
+
+// 报告按钮上的数据点计数徽标
+function _updateReportBadge() {
+  try {
+    var n = LabRecorder.totalPoints();
+    var btns = document.querySelectorAll('#btn-report');
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].textContent = n > 0 ? ('\uD83D\uDCC4 \u5BFC\u51FA\u5B9E\u9A8C\u62A5\u544A (' + n + ')') : '\uD83D\uDCC4 \u5BFC\u51FA\u5B9E\u9A8C\u62A5\u544A';
+    }
+  } catch (e) { /* 忽略 */ }
+}
+
+// 百分比专用格式化（避免出现 0.00e+0% 这种写法）
+function _fmtPct(v) {
+  if (typeof v !== 'number' || isNaN(v) || !isFinite(v)) return '0.00';
+  var a = Math.abs(v);
+  if (a >= 1000) return v.toExponential(2);
+  return v.toFixed(2);
+}
+
+// 最小二乘：线性拟合 y = a·x + b
+function _fitLinear(pts) {
+  var n = pts.length;
+  if (n < 2) return null;
+  var sx = 0, sy = 0, sxx = 0, sxy = 0, syy = 0, i, x, y;
+  for (i = 0; i < n; i++) { x = pts[i][0]; y = pts[i][1]; sx += x; sy += y; sxx += x * x; sxy += x * y; syy += y * y; }
+  var den = n * sxx - sx * sx;
+  if (Math.abs(den) < 1e-30) return null;
+  var a = (n * sxy - sx * sy) / den;
+  var b = (sy - a * sx) / n;
+  var ssTot = syy - sy * sy / n, ssRes = 0;
+  for (i = 0; i < n; i++) { var r = pts[i][1] - (a * pts[i][0] + b); ssRes += r * r; }
+  var r2 = ssTot > 1e-30 ? 1 - ssRes / ssTot : 1;
+  var txt = _fmtNum(a, 6) + '·x';
+  if (Math.abs(b) > 1e-12) txt += (b < 0 ? ' - ' : ' + ') + _fmtNum(Math.abs(b), 6);
+  return { type: 'linear', a: a, b: b, r2: r2, f: function (xx) { return a * xx + b; }, text: txt };
+}
+
+// 最小二乘：幂律拟合 y = A·x^B
+function _fitPower(pts) {
+  var i;
+  for (i = 0; i < pts.length; i++) { if (pts[i][0] <= 0 || pts[i][1] <= 0) return null; }
+  var lp = pts.map(function (p) { return [Math.log(p[0]), Math.log(p[1])]; });
+  var f = _fitLinear(lp);
+  if (!f) return null;
+  var B = f.a, A = Math.exp(f.b);
+  var sy = 0;
+  for (i = 0; i < pts.length; i++) sy += pts[i][1];
+  var mean = sy / pts.length, ssTot = 0, ssRes = 0;
+  for (i = 0; i < pts.length; i++) {
+    ssTot += Math.pow(pts[i][1] - mean, 2);
+    ssRes += Math.pow(pts[i][1] - A * Math.pow(pts[i][0], B), 2);
+  }
+  var r2 = ssTot > 1e-30 ? 1 - ssRes / ssTot : 1;
+  return { type: 'power', a: A, b: B, r2: r2, f: function (xx) { return A * Math.pow(xx, B); }, text: _fmtNum(A, 6) + '·x^' + _fmtNum(B, 4) };
+}
+
+function _labClone(p) {
+  var o = {};
+  for (var k in p) if (Object.prototype.hasOwnProperty.call(p, k)) o[k] = p[k];
+  return o;
+}
+
+// ========================================
+// 依据学生真实操作构建「实测数据」报告章节
+// ========================================
+function _buildMeasuredSections() {
+  var rec = LabRecorder;
+  var exp = rec.exp || AppState.currentExperiment;
+  var out = { hasData: false, opRows: [], statRows: [], charts: [], table: null, analysis: '' };
+  if (!exp) return out;
+
+  var self = rec;
+  var sweepList = Object.keys(rec.sweeps).map(function (k) { return rec.sweeps[k]; })
+    .filter(function (s) { return s.points && s.points.length > 0; })
+    .sort(function (a, b) { return b.points.length - a.points.length; });
+  var runs = rec.runs.filter(function (r) { return r.samples && r.samples.length > 1; });
+  var p0 = getParamValues();
+
+  // ---- 1. 参数扫描曲线（取操作最多的两个参数）----
+  var chartable = sweepList.filter(function (s) { return s.points.length >= 2; }).slice(0, 2);
+  var stats = [];
+
+  sweepList.forEach(function (s) {
+    var meta = rec.respMeta(s.key);
+    var pts = s.points.slice().sort(function (a, b) { return a.x - b.x; });
+    var xy = pts.map(function (p) { return [p.x, p.y]; });
+    var first = pts[0], last = pts[pts.length - 1];
+
+    // 与理论值的偏差（理论值按该采样点当时的完整实验条件计算）
+    var maxErr = 0, sumErr = 0;
+    pts.forEach(function (p) {
+      var tv = rec.responseOf(p.snap || _labClone(p0), s.key);
+      var e = Math.abs(p.y - tv) / Math.max(Math.abs(tv), 1e-30) * 100;
+      if (e > maxErr) maxErr = e;
+      sumErr += e;
+    });
+    var avgErr = sumErr / pts.length;
+
+    var fl = _fitLinear(xy), fp = _fitPower(xy), best = null;
+    if (fl && fp) best = (fp.r2 > fl.r2 + 0.005) ? fp : fl;
+    else best = fl || fp;
+
+    stats.push({
+      sweep: s, meta: meta, pts: pts, xy: xy, first: first, last: last,
+      fit: best, maxErr: maxErr, avgErr: avgErr
+    });
+  });
+
+  // 统计表
+  stats.forEach(function (st) {
+    var s = st.sweep, m = st.meta;
+    out.statRows.push([
+      s.symbol + ' (' + s.unit + ')',
+      String(st.pts.length),
+      _fmtNum(st.first.x) + ' → ' + _fmtNum(st.last.x),
+      _fmtNum(st.first.y) + ' → ' + _fmtNum(st.last.y),
+      st.fit ? st.fit.text : '—',
+      st.fit ? _fmtNum(st.fit.r2, 4) : '—',
+      '<span style="color:#2166AC;">' + _fmtPct(st.avgErr) + '%</span>'
+    ]);
+  });
+
+  // 曲线图
+  var ci = 0;
+  chartable.forEach(function (s) {
+    var st = null;
+    for (var i = 0; i < stats.length; i++) if (stats[i].sweep.id === s.id) st = stats[i];
+    if (!st) return;
+    var meta = st.meta;
+    var xs = st.xy.map(function (p) { return p[0]; });
+    var xmin = Math.min.apply(null, xs), xmax = Math.max.apply(null, xs);
+    var span = (xmax - xmin) || Math.max(Math.abs(xmax), 1e-12) * 0.1;
+    var lo = xmin - span * 0.05, hi = xmax + span * 0.05;
+
+    var theo = [];
+    var N = 140;
+    for (var j = 0; j <= N; j++) {
+      var x = lo + (hi - lo) * j / N;
+      // 取 x 最近采样点的实验条件，保证理论曲线与对应实测点处于同一条件下
+      var near = null, nd = Infinity;
+      for (var q = 0; q < st.pts.length; q++) {
+        var dq = Math.abs(st.pts[q].x - x);
+        if (dq < nd) { nd = dq; near = st.pts[q]; }
+      }
+      var pp = _labClone((near && near.snap) || p0);
+      pp[s.id] = x;
+      theo.push([x, rec.responseOf(pp, s.key)]);
+    }
+
+    var series = [
+      {
+        name: '理论曲线', type: 'line', data: theo, symbol: 'none', smooth: true,
+        lineStyle: { color: '#2166AC', width: 2 }, animation: false
+      },
+      {
+        name: '实测数据点', type: 'scatter', data: st.xy, symbolSize: 7,
+        itemStyle: { color: '#D6604D', borderColor: '#8c2f22', borderWidth: 0.6 }, animation: false
+      }
+    ];
+    if (st.fit) {
+      var fd = [];
+      for (var k = 0; k <= N; k++) {
+        var xf = lo + (hi - lo) * k / N;
+        fd.push([xf, st.fit.f(xf)]);
+      }
+      series.push({
+        name: '拟合 ' + st.fit.text + '  (R²=' + _fmtNum(st.fit.r2, 4) + ')',
+        type: 'line', data: fd, symbol: 'none', smooth: true,
+        lineStyle: { color: '#1B9E77', width: 1.8, type: 'dashed' }, animation: false
+      });
+    }
+
+    var opt = {
+      backgroundColor: '#ffffff',
+      title: {
+        text: meta.sym + ' – ' + s.symbol + ' 实测关系曲线',
+        subtext: '采样 ' + st.pts.length + ' 点 | 平均相对误差 ' + _fmtPct(st.avgErr) + '% | 理论曲线按各采样点的实际实验条件逐点计算',
+        left: 'center', top: 6,
+        textStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 13, fontWeight: 'bold', color: '#000000' },
+        subtextStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 9, color: '#555555' }
+      },
+      tooltip: { trigger: 'axis', textStyle: { fontSize: 10 } },
+      legend: { bottom: 2, itemWidth: 18, itemHeight: 8, textStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 9, color: '#000000' } },
+      grid: { left: 78, right: 26, top: 66, bottom: 52 },
+      xAxis: {
+        type: 'value', scale: true, name: s.symbol + (s.unit ? ' (' + s.unit + ')' : ''),
+        nameLocation: 'middle', nameGap: 26,
+        nameTextStyle: { fontSize: 11, fontWeight: 'bold', color: '#000000' },
+        axisLine: { lineStyle: { color: '#000000', width: 1.2 } },
+        axisLabel: { fontSize: 9, color: '#000000' }, splitLine: { show: false }
+      },
+      yAxis: {
+        type: 'value', scale: true, name: meta.sym + (meta.unit ? ' (' + meta.unit + ')' : ''),
+        nameLocation: 'middle', nameGap: 48,
+        nameTextStyle: { fontSize: 11, fontWeight: 'bold', color: '#000000' },
+        axisLine: { lineStyle: { color: '#000000', width: 1.2 } },
+        axisLabel: { fontSize: 9, color: '#000000' }, splitLine: { show: false }
+      },
+      series: series,
+      animation: false
+    };
+    out.charts.push({ id: 'dyn-' + (ci++), opt: opt });
+  });
+
+  // ---- 2. 仿真过程实测时序 ----
+  if (runs.length) {
+    var expNow = exp;
+    var tSeries = [];
+    var allT = [];
+    runs.forEach(function (r, i) {
+      tSeries.push({
+        name: '运行段 #' + r.seq, type: 'line', data: r.samples, symbol: 'none', smooth: false,
+        lineStyle: { color: _T7[i % 7], width: 2, type: _dash7[i % 7] }, animation: false
+      });
+      r.samples.forEach(function (s) { allT.push(s[0]); });
+    });
+    var tMax = Math.max.apply(null, allT.concat([0]));
+    var tMin = Math.min.apply(null, allT.concat([0]));
+
+    var yName = expNow === 'newton' ? 'F (N)' : (expNow === 'poiseuille' ? 'Q (m\u00B3/s)' : 'v (m/s)');
+    var xName = expNow === 'stokes' ? 't (s)' : 't (s)';
+    var sub = '共 ' + runs.length + ' 段运行，累计 ' + runs.reduce(function (a, r) { return a + r.samples.length; }, 0) + ' 个采样点';
+
+    // 理论参考
+    if (expNow === 'stokes') {
+      var ps = getParamValues();
+      var cs = PhysicsEngine.stokes(ps.ballRadius, ps.ballDensity, ps.fluidDensity, ps.viscosity);
+      var responseS = getStokesResponseModel(ps, cs);
+      var th = [], thV = [];
+      for (var q = 0; q <= 120; q++) {
+        var tt = tMin + (tMax - tMin) * q / 120;
+        th.push([tt, responseS.velocityAt(tt)]);
+        thV.push([tt, cs.vt]);
+      }
+      tSeries.push({ name: '理论 v(t)', type: 'line', data: th, symbol: 'none', smooth: true, lineStyle: { color: '#2166AC', width: 1.8 }, animation: false });
+      tSeries.push({ name: '终端速度 vt', type: 'line', data: thV, symbol: 'none', smooth: true, lineStyle: { color: '#7570B3', width: 1.4, type: 'dashed' }, animation: false });
+    } else {
+      var cur = expNow === 'newton'
+        ? PhysicsEngine.newtonViscosity(p0.velocity, p0.viscosity, p0.distance, p0.area).F
+        : PhysicsEngine.poiseuille(p0.radius, p0.length, p0.pressure, p0.viscosity, p0.density).Q;
+      var flat = [];
+      for (var w = 0; w <= 60; w++) { var tw = tMin + (tMax - tMin) * w / 60; flat.push([tw, cur]); }
+      tSeries.push({ name: '当前理论值', type: 'line', data: flat, symbol: 'none', smooth: true, lineStyle: { color: '#7570B3', width: 1.4, type: 'dashed' }, animation: false });
+    }
+
+    out.charts.push({
+      id: 'dyn-' + (ci++),
+      opt: {
+        backgroundColor: '#ffffff',
+        title: {
+          text: '仿真过程实测时序曲线', subtext: sub, left: 'center', top: 6,
+          textStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 13, fontWeight: 'bold', color: '#000000' },
+          subtextStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 9, color: '#555555' }
+        },
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 10 } },
+        legend: { bottom: 2, itemWidth: 18, itemHeight: 8, textStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 9, color: '#000000' } },
+        grid: { left: 78, right: 26, top: 66, bottom: 52 },
+        xAxis: {
+          type: 'value', scale: true, name: xName, nameLocation: 'middle', nameGap: 26,
+          nameTextStyle: { fontSize: 11, fontWeight: 'bold', color: '#000000' },
+          axisLine: { lineStyle: { color: '#000000', width: 1.2 } },
+          axisLabel: { fontSize: 9, color: '#000000' }, splitLine: { show: false }
+        },
+        yAxis: {
+          type: 'value', scale: true, name: yName, nameLocation: 'middle', nameGap: 48,
+          nameTextStyle: { fontSize: 11, fontWeight: 'bold', color: '#000000' },
+          axisLine: { lineStyle: { color: '#000000', width: 1.2 } },
+          axisLabel: { fontSize: 9, color: '#000000' }, splitLine: { show: false }
+        },
+        series: tSeries,
+        animation: false
+      }
+    });
+  }
+
+  // ---- 3. 流体预设对比 ----
+  var presetNames = [], presetVals = [];
+  rec.presets.forEach(function (p) {
+    if (presetNames.indexOf(p.name) === -1) { presetNames.push(p.name); presetVals.push(p.y); }
+    else { presetVals[presetNames.indexOf(p.name)] = p.y; }
+  });
+  if (presetNames.length >= 2) {
+    var pmeta = rec.respMeta(rec.presets[0].key);
+    out.charts.push({
+      id: 'dyn-' + (ci++),
+      opt: {
+        backgroundColor: '#ffffff',
+        title: {
+          text: '不同流体下的 ' + pmeta.sym + ' 对比',
+          subtext: '共切换 ' + presetNames.length + ' 种流体（按切换顺序）',
+          left: 'center', top: 6,
+          textStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 13, fontWeight: 'bold', color: '#000000' },
+          subtextStyle: { fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 9, color: '#555555' }
+        },
+        tooltip: { trigger: 'axis', textStyle: { fontSize: 10 } },
+        grid: { left: 78, right: 26, top: 66, bottom: 80 },
+        xAxis: {
+          type: 'category', data: presetNames,
+          nameTextStyle: { fontSize: 11, fontWeight: 'bold', color: '#000000' },
+          axisLine: { lineStyle: { color: '#000000', width: 1.2 } },
+          axisLabel: { fontSize: 8, color: '#000000', rotate: 30, interval: 0 }, splitLine: { show: false }
+        },
+        yAxis: {
+          type: 'value', scale: true, name: pmeta.sym + (pmeta.unit ? ' (' + pmeta.unit + ')' : ''),
+          nameLocation: 'middle', nameGap: 48,
+          nameTextStyle: { fontSize: 11, fontWeight: 'bold', color: '#000000' },
+          axisLine: { lineStyle: { color: '#000000', width: 1.2 } },
+          axisLabel: { fontSize: 9, color: '#000000' }, splitLine: { show: false }
+        },
+        series: [{
+          name: pmeta.name, type: 'bar', data: presetVals, barMaxWidth: 40,
+          itemStyle: { color: '#2166AC' }, animation: false
+        }],
+        animation: false
+      }
+    });
+  }
+
+  // ---- 4. 操作记录表 ----
+  evRows(rec, out);
+
+  // ---- 5. 实测数据明细表（取采样最多的扫描）----
+  if (stats.length) {
+    var top = stats[0];
+    var rows = [];
+    var show = top.pts.slice(0, 30);
+    show.forEach(function (p, i) {
+      var tv = rec.responseOf(p.snap || _labClone(p0), top.sweep.key);
+      rows.push([
+        String(i + 1),
+        _fmtNum(p.x),
+        _fmtNum(p.y),
+        _fmtNum(tv),
+        '<span style="color:#2166AC;">' + _fmtPct(Math.abs(p.y - tv) / Math.max(Math.abs(tv), 1e-30) * 100) + '%</span>'
+      ]);
+    });
+    out.table = {
+      headers: ['序号', top.sweep.symbol + ' (' + top.sweep.unit + ')', '实测 ' + top.meta.sym, '理论 ' + top.meta.sym, '相对误差'],
+      rows: rows,
+      note: '共 ' + top.pts.length + ' 个采样点' + (top.pts.length > 30 ? '，此处列出前 30 个' : '')
+    };
+  }
+
+  out.hasData = out.charts.length > 0 || out.statRows.length > 0;
+
+  // ---- 6. 基于实测数据的分析文本 ----
+  if (out.hasData) {
+    var totalPts = rec.totalPoints();
+    var html = '<p><b>\u5B9E\u6D4B\u6570\u636E\u6982\u51B5\uff1A</b>本次实验共记录 <b>' + totalPts + '</b> 个数据点，' +
+      '调节了 <b>' + stats.length + '</b> 个参数' +
+      (runs.length ? '，运行仿真 <b>' + runs.length + '</b> 段' : '') +
+      (presetNames.length ? '，切换流体 <b>' + presetNames.length + '</b> 种' : '') + '。' +
+      '以下图像均由本次真实操作数据绘制，不同学生的操作会产生不同的曲线。</p>';
+
+    stats.forEach(function (st) {
+      var s = st.sweep, m = st.meta;
+      var rel = '采样点不足（' + st.pts.length + ' 个），未给出拟合关系';
+      if (st.fit) {
+        rel = st.fit.type === 'power'
+          ? ('幂律关系 ' + m.sym + ' = ' + st.fit.text.replace('x', s.symbol))
+          : ('线性关系 ' + m.sym + ' = ' + st.fit.text.replace('x', s.symbol));
+      }
+      var trend = st.last.y > st.first.y ? '增大' : (st.last.y < st.first.y ? '减小' : '基本不变');
+      html += '<p><b>' + s.name + '：</b>由 ' + _fmtNum(st.first.x) + ' 调节至 ' + _fmtNum(st.last.x) +
+        ' ' + s.unit + '，共 ' + st.pts.length + ' 个采样点，' + m.name + '由 ' + _fmtNum(st.first.y) + ' ' + m.unit +
+        ' ' + trend + '至 ' + _fmtNum(st.last.y) + ' ' + m.unit + '。拟合结果呈' + rel +
+        (st.fit ? '，决定系数 R² = ' + _fmtNum(st.fit.r2, 4) : '') +
+        '；与理论值的平均相对误差为 ' + _fmtPct(st.avgErr) + '%，最大相对误差 ' + _fmtPct(st.maxErr) + '%。</p>';
+    });
+
+    if (runs.length) {
+      var lastRun = runs[runs.length - 1];
+      var lastV = lastRun.samples[lastRun.samples.length - 1][1];
+      html += '<p><b>仿真时序：</b>共采集 ' + runs.reduce(function (a, r) { return a + r.samples.length; }, 0) +
+        ' 个时刻的瞬时值' + (exp === 'stokes' ? '，小球速度呈指数上升并趋近终端速度' : '，曲线反映了运行过程中参数调节对响应量的实时影响') +
+        '，末段结束时刻的实测值为 ' + _fmtNum(lastV) + '。</p>';
+    }
+    if (presetNames.length >= 2) {
+      var mx = 0, mn = 0;
+      for (var z = 1; z < presetVals.length; z++) {
+        if (presetVals[z] > presetVals[mx]) mx = z;
+        if (presetVals[z] < presetVals[mn]) mn = z;
+      }
+      html += '<p><b>流体对比：</b>在切换过的 ' + presetNames.length + ' 种流体中，' + presetNames[mx] + ' 对应的响应量最大（' +
+        _fmtNum(presetVals[mx]) + '），' + presetNames[mn] + ' 最小（' + _fmtNum(presetVals[mn]) + '），' +
+        '表明流体黏度与密度对实验结果具有显著影响。</p>';
+    }
+    out.analysis = html;
+  }
+
+  return out;
+
+  function evRows(rec2, out2) {
+    // 参数调节（聚合） + 其他操作事件，按时间排序
+    var rows = [];
+    stats.forEach(function (st) {
+      rows.push({
+        t: st.pts[0].t,
+        type: '调节参数',
+        text: st.sweep.name,
+        detail: _fmtNum(st.first.x) + ' → ' + _fmtNum(st.last.x) + ' ' + st.sweep.unit + '（' + st.pts.length + ' 个采样点）'
+      });
+    });
+    rec2.events.forEach(function (e) {
+      rows.push({ t: e.t, type: e.type, text: e.label || '—', detail: e.detail || '' });
+    });
+    rows.sort(function (a, b) { return a.t - b.t; });
+    rows.forEach(function (r, i) {
+      out2.opRows.push([String(i + 1), _labClock(r.t), r.type, r.text, r.detail]);
+    });
+    if (!rows.length) out2.opRows.push(['—', '—', '未记录到操作', '请调节参数或运行仿真后再导出', '']);
+  }
+}
+
+// ========================================
 // 论文级别实验报告生成
 // ========================================
 
@@ -7628,6 +8769,44 @@ function _fmtNum(v, dec) {
 }
 
 /**
+ * 报告用：把「模型适用范围」写成一段说明文字。
+ * 返回 { level, title, html } 或 null（无提示时）。
+ *   level: 'ok' | 'warn'
+ */
+function _reportRegimeNotice(info, modelName, extra) {
+  if (!info) return null;
+  var warn = (info.level === 'warn' || info.level === 'bad' || info.ok === false);
+  function _re(x) {
+    return Math.abs(x) >= 10000 ? x.toExponential(2) : x.toFixed(x < 1 ? 4 : 1);
+  }
+  var reTxt = '';
+  if (info.Re0 !== undefined && isFinite(info.Re0)) {
+    reTxt = '雷诺数 Re = ' + _re(info.Re) + '（按斯托克斯初估速度为 ' + _re(info.Re0) + '，两者均落在同一分区）。';
+  } else if (info.Re !== undefined && isFinite(info.Re)) {
+    reTxt = '雷诺数 Re = ' + _re(info.Re) + '。';
+  }
+  var p = [];
+  p.push('<p><b>' + modelName + '适用性判定：</b>' + reTxt + (info.msg || '') + '</p>');
+  if (info.formula) {
+    p.push('<p>本区间采用的计算式：<code>' + info.formula + '</code></p>');
+  }
+  // 斯托克斯：明确「理论值/程序值」两个口径的差异来源，避免误读为实验误差
+  if (extra && extra.pureVt !== undefined && extra.procVt !== undefined && isFinite(extra.pureVt) && isFinite(extra.procVt)) {
+    var dPure = Math.abs(extra.pureVt - extra.procVt) / Math.max(Math.abs(extra.pureVt), 1e-30) * 100;
+    p.push('<p><b>关于表中"相对误差"的口径：</b>表中「理论值」一列按纯斯托克斯公式 vt = 2r²(ρs−ρf)g/(9μ) 计算，' +
+      '而「程序值」一列按上表所选阻力分区的修正公式求解。当 Re 超出斯托克斯区时，两者差异来自<b>模型本身不同</b>，' +
+      '并非实验误差，也不代表程序算错。当前两列相差 ' + _fmtNum(dPure, 2) + '%，' +
+      '（' + _fmtNum(extra.pureVt) + ' m/s vs ' + _fmtNum(extra.procVt) + ' m/s）。' +
+      '若要让两者吻合，应把参数调回 Re < 0.1 的斯托克斯区（减小球半径 r 或提高黏度 μ）。</p>');
+  }
+  if (warn) {
+    p.push('<p>⚠️ 结论部分所给出的规律是在上述分区前提下成立的；' +
+      '如需严格验证' + modelName + '本身，请按提示把参数调整回其适用范围内再重复实验。</p>');
+  }
+  return { level: warn ? 'warn' : 'ok', title: modelName + '的适用范围', html: p.join('') };
+}
+
+/**
  * 生成三线表HTML
  */
 function _threeLineTable(headers, rows, colWidths) {
@@ -7664,6 +8843,13 @@ function generateReport() {
   if (!exp) { console.warn('[Report] No experiment selected'); return; }
   var params = getParamValues();
   console.log('[Report] Generating report for', exp, 'params:', params);
+
+  // ---- 采集学生真实操作数据（不同操作 → 不同数据 → 不同图像）----
+  var measured = _buildMeasuredSections();
+  console.log('[Report] Measured sections:', measured.hasData, 'charts:', measured.charts.length);
+
+  // 报告中全部图表的 id 清单（由 figWrap 填充），供「保存全部图像」使用
+  var reportChartInfos = [];
 
   // ---- 计算数据 ----
   var reportData = {};
@@ -7714,8 +8900,10 @@ function generateReport() {
     }
 
     var physics = PhysicsEngine.newtonViscosity(U, eta0, d_mm, A);
+    var _apNwR = checkNewtonApplicability(U, eta0, d_mm, A);
 
     reportData = {
+      regimeNotice: _reportRegimeNotice(_apNwR, '牛顿黏性定律'),
       title: '\u725B\u987F\u7C98\u6027\u5B9A\u5F8B\u5B9E\u9A8C\u62A5\u544A',
       subtitle: '\u9ECF\u6EDE\u963B\u529BF\u4E0Ez\uFF0CU\uFF0CA\uFF0C\u03B7\u7684\u5173\u7CFB',
       chartTitle: '\u03C4 vs du/dy \u2014 \u4E0D\u540C\u7C98\u5EA6\u4E0B\u7684\u526A\u5207\u5E94\u529B\u54CD\u5E94',
@@ -7892,8 +9080,10 @@ function generateReport() {
 
     var physicsP = PhysicsEngine.poiseuille(R0, L, dP, mu, rho);
     var tau_w_P = (dP / L) * (R0 / 2);
+    var _apPqR = checkPoiseuilleApplicability(R0, L, dP, mu, rho);
 
     reportData = {
+      regimeNotice: _reportRegimeNotice(_apPqR, '泊肃叶定律'),
       title: '\u6CCA\u8083\u53F6\u5B9A\u5F8B\u5B9E\u9A8C\u62A5\u544A',
       subtitle: '\u7BA1\u9053\u622A\u9762\u901F\u5EA6\u5206\u5E03 u \u7684\u7814\u7A76',
       chartTitle: 'u(r) \u2014 \u4E0D\u540C\u7BA1\u5F84\u4E0B\u7684\u622A\u9762\u901F\u5EA6\u5206\u5E03',
@@ -8081,8 +9271,14 @@ function generateReport() {
 
     var physicsS = PhysicsEngine.stokes(r0, rhoP, rhoF, muS, g);
     var F_drag_S = 6 * Math.PI * muS * r0 * physicsS.vt;
+    var _apStR = checkStokesApplicability(r0, rhoP, rhoF, muS, g);
+    _apStR.Re = physicsS.Re;
 
     reportData = {
+      regimeNotice: _reportRegimeNotice(_apStR, '斯托克斯定律', {
+        pureVt: 2 * r0 * r0 * (rhoP - rhoF) * g / (9 * muS),
+        procVt: physicsS.vt
+      }),
       title: '\u65AF\u6258\u514B\u65AF\u5B9A\u5F8B\u5B9E\u9A8C\u62A5\u544A',
       subtitle: '\u7403\u4F53\u6C89\u964D\u901F\u5EA6 v(t)\u4E0E\u9ECF\u6EDE\u963B\u529B\u7684\u7814\u7A76',
       chartTitle: 'v(t) \u2014 \u4E0D\u540C\u7403\u534A\u5F84\u4E0B\u7684\u6C89\u964D\u901F\u5EA6\u54CD\u5E94',
@@ -8252,8 +9448,16 @@ function generateReport() {
 	    '.medium-chart { flex: 1; min-width: 280px; height: 320px; }\n' +
     '.small-charts-row { display: flex; gap: 12px; margin: 16px 0 8px; flex-wrap: wrap; }\n' +
     '.small-chart { flex: 1; min-width: 200px; height: 260px; }\n' +
+    '.dyn-charts-row { display: flex; gap: 14px; margin: 10px 0; flex-wrap: wrap; }\n' +
+    '.dyn-chart { flex: 1 1 440px; min-width: 320px; height: 420px; }\n' +
+    '@media print { .dyn-chart { height: 340px; } }\n' +
+    '.tip-box { background: #f5f7fb; border-left: 3px solid #5b6abf; padding: 8px 12px; font-size: 12px; color: #444; margin: 8px 0; }\n' +
     '@media print { .small-chart { height: 220px; } }\n' +
     '.note { font-size: 12px; color: #666; margin-top: 8px; }\n' +
+    '.regime-ok { border-left: 4px solid #2166AC; background: #f2f6fb; padding: 10px 14px; font-size: 13px; line-height: 1.85; }\n' +
+    '.regime-warn { border-left: 4px solid #D6604D; background: #fdf3f1; padding: 10px 14px; font-size: 13px; line-height: 1.85; }\n' +
+    '.regime-ok p, .regime-warn p { margin-bottom: 8px; text-indent: 0; }\n' +
+    '.regime-ok code, .regime-warn code { font-family: Consolas, Monaco, monospace; background: rgba(0,0,0,0.06); padding: 1px 5px; border-radius: 3px; font-size: 12px; }\n' +
     '.analysis-content { font-size: 14px; line-height: 1.9; text-align: justify; }\n' +
     '.analysis-content p { margin-bottom: 10px; text-indent: 2em; }\n' +
     '.analysis-content b { color: #2166AC; }\n' +
@@ -8262,6 +9466,12 @@ function generateReport() {
     '.toolbar-wrap button { padding: 6px 16px; border: 1px solid #999; border-radius: 3px; background: #f5f5f5; color: #333; cursor: pointer; font-size: 12px; font-family: Arial, Helvetica, sans-serif; }\n' +
     '.toolbar-right button { margin-left: 8px; }\n' +
     '.toolbar-wrap button:hover { background: #e0e0e0; }\n' +
+    '.fig-wrap { position: relative; display: block; }\n' +
+    '.fig-inner { display: block; width: 100%; height: 100%; }\n' +
+    '.fig-dl { position: absolute; top: 4px; right: 4px; z-index: 5; padding: 2px 8px; font-size: 11px; font-family: inherit; color: #333; background: #fff; border: 1px solid #b9b9b9; border-radius: 3px; cursor: pointer; opacity: 0.3; }\n' +
+    '.fig-wrap:hover .fig-dl { opacity: 1; }\n' +
+    '.fig-dl:hover { background: #f0f0f0; }\n' +
+    '@media print { .fig-dl { display: none; } }\n' +
     '@media print { body { padding: 15px 25px; } .chart-box { height: 420px; } .toolbar-wrap { display: none; } }\n' +
     '</style>\n</head>\n<body>\n' +
 
@@ -8273,55 +9483,228 @@ function generateReport() {
 
     '<div class="toolbar-wrap">\n' +
     '  <div class="toolbar-left"><button onclick="window.close()">✕ 关闭</button></div>\n' +
-    '  <div class="toolbar-right"><button onclick="window.print()">🖨 打印</button> <button id="btn-save-png">💾 保存为PNG</button></div>\n' +
+    '  <div class="toolbar-right">' +
+    '<button id="btn-save-all">🖼 保存全部图像</button> ' +
+    '<button id="btn-pdf" title="调起浏览器打印，在目标处选择「另存为 PDF」">🖨 打印 / 导出 PDF</button></div>\n' +
     '</div>\n' +
 
-    '<div class="section">\n' +
-    '  <h2>1. \u5B9E\u9A8C\u53C2\u6570</h2>\n' +
-    _threeLineTable(reportData.paramHeaders, reportData.paramRows) +
-    '</div>\n' +
+    (function () {
+      var n = 0, parts = [];
+      function S(title, body) {
+        n++;
+        parts.push('<div class="section">\n  <h2>' + n + '. ' + title + '</h2>\n' + body + '</div>\n');
+      }
 
-    (reportData.calcRows ? '<div class="section">\n' +
-    '  <h2>2. \u8BA1\u7B97\u7ED3\u679C</h2>\n' + _threeLineTable(reportData.calcHeaders, reportData.calcRows) +
-    '</div>\n' : '') +
+      // 图表序号 + 单图下载按钮（供「保存全部图像」与「保存为PNG」使用）
+      reportChartInfos = [];
+      function figWrap(id, cls) {
+        var figNo = reportChartInfos.length + 1;
+        reportChartInfos.push({ id: id, figNo: figNo });
+        return '<div class="' + cls + ' fig-wrap" data-fig="' + figNo + '">' +
+          '<div class="fig-inner" id="' + id + '"></div>' +
+          '<button class="fig-dl" data-chart="' + id + '" data-fig="' + figNo + '" title="只保存这一张图像">保存此图</button>' +
+          '</div>';
+      }
 
-    '<div class="section">\n' +
-    '  <h2>3. \u591A\u66F2\u7EBF\u5BF9\u6BD4\u56FE</h2>\n' +
-    (reportData.seriesF ?
-    '  <div class="charts-row">\n' +
-    '    <div id="reportChart" class="chart-box-half"></div>\n' +
-    '    <div id="reportChartF" class="chart-box-half"></div>\n' +
-    '  </div>\n' :
-    '  <div id="reportChart" class="chart-box"></div>\n') +
-    (reportData.mediumCharts ? '<div class="medium-charts-row">\n' +
-    reportData.mediumCharts.map(function(mc) { return '  <div id="' + mc.id + '" class="medium-chart"></div>'; }).join('\n') + '\n' +
-    '</div>\n' : '') +
-    (reportData.smallCharts ? '<div class="small-charts-row">\n' +
-    reportData.smallCharts.map(function(sc) { return '  <div id="' + sc.id + '" class="small-chart"></div>'; }).join('\n') + '\n' +
-    '</div>\n' : '') +
-    '</div>\n' +
+      S('\u5B9E\u9A8C\u53C2\u6570', _threeLineTable(reportData.paramHeaders, reportData.paramRows));
 
-    '<div class="section">\n' +
-    '  <h2>4. \u5B9E\u9A8C\u7ED3\u679C\u5206\u6790</h2>\n' +
-    '  <div class="analysis-content">' + (reportData.analysisText || '<p>\u6682\u65E0\u5206\u6790\u6570\u636E\u3002</p>') + '</div>\n' +
-    '</div>\n' +
+      if (reportData.calcRows) {
+        S('\u8BA1\u7B97\u7ED3\u679C', _threeLineTable(reportData.calcHeaders, reportData.calcRows));
+      }
+
+      if (reportData.regimeNotice) {
+        S('\u6A21\u578B\u9002\u7528\u8303\u56F4',
+          '<div class="' + (reportData.regimeNotice.level === 'warn' ? 'regime-warn' : 'regime-ok') + '">' +
+          reportData.regimeNotice.html + '</div>');
+      }
+
+      // ===== 由学生真实操作生成的章节（无操作时不出现）=====
+      if (measured.hasData) {
+        S('\u5B9E\u9A8C\u64CD\u4F5C\u8BB0\u5F55',
+          _threeLineTable(['\u5E8F\u53F7', '\u65F6\u95F4', '\u64CD\u4F5C\u7C7B\u578B', '\u64CD\u4F5C\u5BF9\u8C61', '\u8BE6\u60C5'],
+            measured.opRows, ['6%', '12%', '14%', '26%', '42%']));
+
+        if (measured.statRows.length) {
+          S('\u53C2\u6570\u8C03\u8282\u7EDF\u8BA1\u4E0E\u5173\u7CFB\u62DF\u5408',
+            _threeLineTable(['\u53C2\u6570', '\u91C7\u6837\u70B9\u6570', '\u8C03\u8282\u8303\u56F4', '\u54CD\u5E94\u91CF\u53D8\u5316',
+              '\u62DF\u5408\u5173\u7CFB', 'R\u00B2', '\u5E73\u5747\u8BEF\u5DEE'],
+              measured.statRows, ['16%', '9%', '22%', '22%', '17%', '7%', '7%']));
+        }
+
+        if (measured.charts.length) {
+          S('\u5B9E\u6D4B\u6570\u636E\u56FE\u50CF',
+            '<div class="dyn-charts-row">\n' +
+            measured.charts.map(function (c) { return '  ' + figWrap(c.id, 'dyn-chart'); }).join('\n') + '\n' +
+            '</div>\n' +
+            '<div class="tip-box">本组图像完全依据你在本次实验中的真实操作绘制：调节过哪些参数，就绘制该参数与响应量的实测关系曲线（含理论曲线与拟合曲线）；运行过仿真，就给出实测时序曲线；切换过多种流体，就给出流体对比图。操作不同，图像的数量与类型也不同。</div>');
+        }
+
+        if (measured.table) {
+          S('\u5B9E\u6D4B\u6570\u636E\u660E\u7EC6',
+            _threeLineTable(measured.table.headers, measured.table.rows) +
+            (measured.table.note ? '<p class="note">' + measured.table.note + '</p>' : ''));
+        }
+      }
+
+      // ===== 理论参考曲线 =====
+      var theoryBody = (reportData.seriesF ?
+        '  <div class="charts-row">\n' +
+        '    ' + figWrap('reportChart', 'chart-box-half') + '\n' +
+        '    ' + figWrap('reportChartF', 'chart-box-half') + '\n' +
+        '  </div>\n' :
+        '  ' + figWrap('reportChart', 'chart-box') + '\n') +
+        (reportData.mediumCharts ? '<div class="medium-charts-row">\n' +
+        reportData.mediumCharts.map(function (mc) { return '  ' + figWrap(mc.id, 'medium-chart'); }).join('\n') + '\n' +
+        '</div>\n' : '') +
+        (reportData.smallCharts ? '<div class="small-charts-row">\n' +
+        reportData.smallCharts.map(function (sc) { return '  ' + figWrap(sc.id, 'small-chart'); }).join('\n') + '\n' +
+        '</div>\n' : '');
+      if (!measured.hasData) {
+        theoryBody = '<div class="tip-box">本次未记录到实验操作（未调节参数、未运行仿真），以下为理论参考曲线。调节滑块或运行仿真后再导出，报告会给出属于你自己的实测曲线。</div>' + theoryBody;
+      }
+      S(measured.hasData ? '\u7406\u8BBA\u53C2\u8003\u66F2\u7EBF' : '\u591A\u66F2\u7EBF\u5BF9\u6BD4\u56FE', theoryBody);
+
+      S('\u5B9E\u9A8C\u7ED3\u679C\u5206\u6790',
+        '<div class="analysis-content">' +
+        (measured.analysis || '') +
+        (measured.analysis ? '<p style="text-indent:0;"><b>\u7406\u8BBA\u5BF9\u7167\u5206\u6790\uff1a</b></p>' : '') +
+        (reportData.analysisText || '<p>\u6682\u65E0\u5206\u6790\u6570\u636E\u3002</p>') +
+        '</div>');
+
+      return parts.join('\n');
+    })() +
 
     '<div class="footer">\n' +
     '  \u9ECF\u6027\u73B0\u8C61\u4EFF\u771F\u6A21\u62DF\u5668 \u2014 \u81EA\u52A8\u751F\u6210\u5B9E\u9A8C\u62A5\u544A\n' +
     '</div>\n' +
 
     '<script>\n' +
+    'var chartList = ' + JSON.stringify(reportChartInfos) + ';\n' +
+    'var figCharts = {};\n' +
+    'function slug(s) { return String(s || "").replace(/[\\\\\\/:*?"<>|\\s]+/g, "_").slice(0, 60) || "chart"; }\n' +
+    'function saveFig(c, name) {\n' +
+    '  var url = c.getDataURL({ type: "png", pixelRatio: 2, backgroundColor: "#fff" });\n' +
+    '  var a = document.createElement("a"); a.href = url; a.download = name + ".png"; a.click();\n' +
+    '}\n' +
+    'function collectFigures() {\n' +
+    '  if (window.__figs) return window.__figs;\n' +
+    '  var out = [];\n' +
+    '  chartList.forEach(function(info) {\n' +
+    '    var c = figCharts[info.id];\n' +
+    '    if (!c) return;\n' +
+    '    var t = "";\n' +
+    '    try { t = c.getOption().title[0].text; } catch (e) {}\n' +
+    '    out.push({ no: info.figNo, title: t, name: "图" + info.figNo + "_" + slug(t), chart: c });\n' +
+    '  });\n' +
+    '  window.__figs = out;\n' +
+    '  return out;\n' +
+    '}\n' +
+    'function afterNextPaint(fn) {\n' +
+    '  requestAnimationFrame(function() { requestAnimationFrame(function() { setTimeout(fn, 60); }); });\n' +
+    '}\n' +
+
+    'document.querySelectorAll(".fig-dl").forEach(function(btn) {\n' +
+    '  btn.addEventListener("click", function() {\n' +
+    '    var id = btn.getAttribute("data-chart");\n' +
+    '    var no = btn.getAttribute("data-fig");\n' +
+    '    var c = figCharts[id];\n' +
+    '    if (!c) { alert("图像尚未就绪，请稍候再试。"); return; }\n' +
+    '    var t = "";\n' +
+    '    try { t = c.getOption().title[0].text; } catch (e) {}\n' +
+    '    saveFig(c, "图" + no + "_" + slug(t));\n' +
+    '  });\n' +
+    '});\n' +
+
+    'var ZIP_STORE = (function() {\n' +
+    '  var T = (function() { var t = new Uint32Array(256); for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();\n' +
+    '  function crc32(u8) { var c = 0xFFFFFFFF; for (var i = 0; i < u8.length; i++) c = T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }\n' +
+    '  function enc(s) { return new TextEncoder().encode(s); }\n' +
+    '  return function zip(files) {\n' +
+    '    var parts = [], central = [], offset = 0, count = 0;\n' +
+    '    files.forEach(function(f) {\n' +
+    '      var nb = enc(f.name), data = f.data, crc = crc32(data), sz = data.length;\n' +
+    '      var lh = new Uint8Array(30 + nb.length), dv = new DataView(lh.buffer);\n' +
+    '      dv.setUint32(0, 0x04034b50, true); dv.setUint16(4, 20, true); dv.setUint16(6, 0x0800, true);\n' +
+    '      dv.setUint16(8, 0, true); dv.setUint16(10, 0, true); dv.setUint16(12, 0, true);\n' +
+    '      dv.setUint32(14, crc, true); dv.setUint32(18, sz, true); dv.setUint32(22, sz, true);\n' +
+    '      dv.setUint16(26, nb.length, true); dv.setUint16(28, 0, true);\n' +
+    '      lh.set(nb, 30); parts.push(lh, data);\n' +
+    '      var ch = new Uint8Array(46 + nb.length), dc = new DataView(ch.buffer);\n' +
+    '      dc.setUint32(0, 0x02014b50, true); dc.setUint16(4, 20, true); dc.setUint16(6, 20, true); dc.setUint16(8, 0x0800, true);\n' +
+    '      dc.setUint32(16, crc, true); dc.setUint32(20, sz, true); dc.setUint32(24, sz, true);\n' +
+    '      dc.setUint16(28, nb.length, true); dc.setUint32(42, offset, true);\n' +
+    '      ch.set(nb, 46); central.push(ch);\n' +
+    '      offset += lh.length + sz; count++;\n' +
+    '    });\n' +
+    '    var cdSize = central.reduce(function(a, b) { return a + b.length; }, 0);\n' +
+    '    var end = new Uint8Array(22), de = new DataView(end.buffer);\n' +
+    '    de.setUint32(0, 0x06054b50, true); de.setUint16(8, count, true); de.setUint16(10, count, true);\n' +
+    '    de.setUint32(12, cdSize, true); de.setUint32(16, offset, true);\n' +
+    '    return new Blob(parts.concat(central, [end]), { type: "application/zip" });\n' +
+    '  };\n' +
+    '})();\n' +
+
+    'function downloadBlob(blob, name) {\n' +
+    '  var u = URL.createObjectURL(blob);\n' +
+    '  var a = document.createElement("a"); a.href = u; a.download = name; a.click();\n' +
+    '  setTimeout(function() { URL.revokeObjectURL(u); }, 60000);\n' +
+    '}\n' +
+
+    'function saveAllZip() {\n' +
+    '  try {\n' +
+    '    var figs = collectFigures();\n' +
+    '    if (!figs.length) { alert("报告中没有可导出的图像。"); return; }\n' +
+    '    var files = figs.map(function(f) {\n' +
+    '      var b64 = f.chart.getDataURL({ type: "png", pixelRatio: 2, backgroundColor: "#fff" }).split(",")[1];\n' +
+    '      var bin = atob(b64), u8 = new Uint8Array(bin.length);\n' +
+    '      for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);\n' +
+    '      return { name: f.name + ".png", data: u8 };\n' +
+    '    });\n' +
+    '    downloadBlob(ZIP_STORE(files), "实验报告图像_" + files.length + "张.zip");\n' +
+    '  } catch (e) {\n' +
+    '    console.error("[ZIP]", e);\n' +
+    '    alert("保存图像失败：" + (e && e.message ? e.message : e));\n' +
+    '  }\n' +
+    '}\n' +
+
+    // 导出 PDF：直接用浏览器自带打印功能（打印对话框里「目标」选「另存为 PDF」即可）
+    'function exportPdf() {\n' +
+    '  try {\n' +
+    '    window.print();\n' +
+    '  } catch (e) {\n' +
+    '    alert("无法调起打印：可手动按 Ctrl+P（macOS 按 ⌘P），在目标处选择「另存为 PDF」。");\n' +
+    '  }\n' +
+    '}\n' +
+
+    'document.getElementById("btn-save-all").addEventListener("click", saveAllZip);\n' +
+    'document.getElementById("btn-pdf").addEventListener("click", exportPdf);\n' +
+
     'var chartDom = document.getElementById("reportChart");\n' +
     'var myChart = echarts.init(chartDom);\n' +
     'var option = ' + JSON.stringify(chartOpt) + ';\n' +
     'myChart.setOption(option);\n' +
+    'figCharts["reportChart"] = myChart;\n' +
     'window.addEventListener("resize", function() { myChart.resize(); });\n' +
     (reportData.seriesF ?
     'var chartOptF = ' + JSON.stringify(pubChartOpt7(reportData.chartTitleF, reportData.chartSubtitleF, reportData.xLabelF, reportData.yLabelF)) + ';\n' +
     'chartOptF.series = ' + JSON.stringify(reportData.seriesF) + ';\n' +
     'var myChartF = echarts.init(document.getElementById("reportChartF"));\n' +
     'myChartF.setOption(chartOptF);\n' +
+    'figCharts["reportChartF"] = myChartF;\n' +
     'window.addEventListener("resize", function() { myChartF.resize(); });\n' : '') +
+    'var dynChartsData = ' + JSON.stringify(measured.charts) + ';\n' +
+    'if(dynChartsData && dynChartsData.length){\n' +
+    '  var dynInstances = [];\n' +
+    '  dynChartsData.forEach(function(c){\n' +
+    '    var d = document.getElementById(c.id);\n' +
+    '    if(!d) return;\n' +
+    '    var ch = echarts.init(d);\n' +
+    '    ch.setOption(c.opt);\n' +
+    '    figCharts[c.id] = ch;\n' +
+    '    dynInstances.push(ch);\n' +
+    '  });\n' +
+    '  window.addEventListener("resize", function(){ dynInstances.forEach(function(c){ c.resize(); }); });\n' +
+    '}\n' +
     'var mediumChartsData = ' + JSON.stringify(reportData.mediumCharts) + ';\n' +
     'if(mediumChartsData && mediumChartsData.length){\n' +
     '  var mcInstances = [];\n' +
@@ -8340,6 +9723,7 @@ function generateReport() {
     '      series: (mc.series && mc.series.length ? mc.series.map(function(s) { return { type: "line", name: s.name, data: s.data, smooth: true, symbol: "none", lineStyle: { color: s.color, width: s.width || 1.8, type: s.dash || "solid" } }; }) : [{ type: "line", data: mc.data, smooth: true, symbol: "none", lineStyle: { color: "#2166AC", width: 1.8 } }]),\n' +
     '      animation: false\n' +
     '    });\n' +
+    '    figCharts[mc.id] = chart;\n' +
     '    mcInstances.push(chart);\n' +
     '  });\n' +
     '  window.addEventListener("resize", function() { mcInstances.forEach(function(c) { c.resize(); }); });\n' +
@@ -8361,14 +9745,11 @@ function generateReport() {
     '      series: [{ type: "line", data: sc.data, smooth: true, symbol: "none", lineStyle: { color: "#2166AC", width: 1.8 } }],\n' +
     '      animation: false\n' +
     '    });\n' +
+    '    figCharts[sc.id] = chart;\n' +
     '    scInstances.push(chart);\n' +
     '  });\n' +
     '  window.addEventListener("resize", function() { scInstances.forEach(function(c) { c.resize(); }); });\n' +
     '}\n' +
-    'document.getElementById("btn-save-png").addEventListener("click", function(){\n' +
-    '  var url = myChart.getDataURL({type:"png",pixelRatio:2,backgroundColor:"#fff"});\n' +
-    '  var a = document.createElement("a"); a.href = url; a.download = "experiment-report.png"; a.click();\n' +
-    '});\n' +
     '<\/script>\n' +
     '</body>\n</html>';
 
@@ -8881,7 +10262,11 @@ function init() {
     var canvas = document.getElementById('qrCanvas');
     if (overlay && canvas) {
       // 绘制二维码
-      QRGenerator.drawOnCanvas(canvas, 'https://hanhhhy.github.io/viscosity-simulator/', 200);
+      var url = (window.location && /^https?:$/.test(window.location.protocol))
+        ? window.location.href : 'https://hanhhhy.github.io/viscosity-simulator/';
+      QRGenerator.drawOnCanvas(canvas, url, 200);
+      var urlLabel = document.getElementById('qrModalUrl');
+      if (urlLabel) urlLabel.textContent = url;
       overlay.classList.add('active');
     }
   }
@@ -9167,7 +10552,7 @@ var AIKnowledgeBase = [
     tags: ['原理'],
     experiment: 'stokes',
     title: '雷诺数校验',
-    response: '📐 <b>雷诺数公式</b>\n上述所有关系仅在 <b>Re < 0.1</b> 时成立。\n<span class="ai-msg-formula">Re = (ρ_f × v_t × 2R) / μ</span>\n\n<span class="ai-msg-warn">⚠️ 警告：</span>如果你把半径调得太大或密度调得太大，导致 v_t 过高，Re 超过 1，流动会产生涡旋，实际阻力会比 6πμRv 大得多，小球会偏离上述规律。\n\n在仿真中可在数据面板查看实时 Re 值，超出适用范围时会显示警告。'
+    response: '📐 <b>雷诺数公式</b>\n纯斯托克斯公式只在 <b>Re &lt; 0.1</b> 时严格适用。\n<span class="ai-msg-formula">Re = (ρ_f × v_t × 2R) / μ</span>\n\n🚦 <b>程序统一采用的判据</b>\n· <b>Re &lt; 0.1</b>：斯托克斯区，F<sub>d</sub> = 6πμrv，严格适用。\n· <b>0.1 ≤ Re &lt; 1</b>：Oseen 修正区，程序加入一阶惯性修正。\n· <b>1 ≤ Re &lt; 800</b>：Schiller–Naumann 过渡区，纯斯托克斯公式不再适用。\n· <b>Re ≥ 800</b>：牛顿阻力区，程序改用平方阻力律。\n\n⚠️ 当页面显示“修正区”或“牛顿阻力区”时，报告会明确说明：差异来自模型适用范围，而不是实验误差。'
   },
   {
     id: 'stokes_law',
@@ -9253,7 +10638,7 @@ var AIKnowledgeBase = [
     tags: ['原理'],
     experiment: 'newton',
     title: '上板速度 u 对流动的影响',
-    response: '📌 <b>现象观察（z、η、A 不变）</b>\n\n<b>▲ u 增大时：</b>\n1. 位移轨迹整体右移，流体层位移速率增大\n2. 稳态速度梯度趋势线斜率减小，层间速度差减小\n3. 位移轨迹波动振幅增大，层间剪切效应增强\n\n<b>▼ u 减小时：</b>\n1. 位移轨迹整体左移，流体层位移速率减小\n2. 稳态速度梯度趋势线斜率增大，层间速度差增大\n3. 位移轨迹波动振幅减小，层间剪切效应减弱\n\n💡 <b>核心规律：</b>上板速度直接决定流体整体运动快慢，速度越大，各层速度差越大，剪切效应越强。'
+    response: '📌 <b>现象观察（z、η、A 不变）</b>\n\n<b>▲ u 增大时：</b>\n1. 位移轨迹整体右移，流体层位移速率增大\n2. 蓝线相对 z 轴的夹角增大，速度梯度 du/dz 增大\n3. 位移轨迹波动振幅增大，层间剪切效应增强\n\n<b>▼ u 减小时：</b>\n1. 位移轨迹整体左移，流体层位移速率减小\n2. 蓝线相对 z 轴的夹角减小，速度梯度 du/dz 减小\n3. 位移轨迹波动振幅减小，层间剪切效应减弱\n\n💡 <b>核心规律：</b>上板速度直接决定流体整体运动快慢，速度越大，各层速度差越大，剪切效应越强。'
   },
   {
     id: 'newton_phenomena_z',
@@ -9261,7 +10646,7 @@ var AIKnowledgeBase = [
     tags: ['原理'],
     experiment: 'newton',
     title: '板间距 z 对流动的影响',
-    response: '📌 <b>现象观察（u、η、A 不变）</b>\n\n<b>▲ z 增大时：</b>\n1. 位移曲线簇沿纵轴拉伸，分布变稀疏\n2. 稳态速度梯度趋势线斜率减小，层间速度过渡更平缓\n3. 位移轨迹波动减弱，剪切效应减弱\n\n<b>▼ z 减小时：</b>\n1. 位移曲线簇沿纵轴压缩，分布变密集\n2. 稳态速度梯度趋势线斜率增大，层间速度差增大\n3. 位移轨迹波动增强，剪切效应增强\n\n💡 <b>核心规律：</b>间距越小，速度梯度 du/dz 越大，剪切效应越强。这就是为什么窄间隙中的流体更难被剪切。'
+    response: '📌 <b>现象观察（u、η、A 不变）</b>\n\n<b>▲ z 增大时：</b>\n1. 位移曲线簇沿纵轴拉伸，分布变稀疏\n2. 蓝线相对 z 轴的夹角减小，速度梯度更平缓\n3. 位移轨迹波动减弱，剪切效应减弱\n\n<b>▼ z 减小时：</b>\n1. 位移曲线簇沿纵轴压缩，分布变密集\n2. 蓝线相对 z 轴的夹角增大，速度梯度增大\n3. 位移轨迹波动增强，剪切效应增强\n\n💡 <b>核心规律：</b>间距越小，速度梯度 du/dz 越大，剪切效应越强。这就是为什么窄间隙中的流体更难被剪切。'
   },
   {
     id: 'newton_phenomena_eta',
@@ -9638,8 +11023,13 @@ var AIAssistant = {
         return '📊 **当前参数下的终端速度**\n\nvt = 2R²g(ρs-ρf) / 9η\n= **' + this.formatShort(vt) + ' m/s**\n= **' + this.formatShort(vt * 1000) + ' mm/s**';
       }
       if (/雷诺数|Re/.test(lower)) {
-        var regime = Re < 1 ? '✅ 层流区（Re < 1，斯托克斯公式适用）' : Re < 1000 ? '⚠️ 过渡区（1 ≤ Re < 1000，斯托克斯公式近似有效）' : '❌ 高雷诺数区（Re ≥ 1000，斯托克斯公式不再适用！）';
-        return '📊 **当前雷诺数分析**\n\nRe = **' + this.formatShort(Re) + '**\n' + regime + '\n\n附：雷诺数 Re = ρ·2R·vt / η';
+        var app = st.stokesApplicability;
+        var regime = app
+          ? (app.ok ? '✅ ' : '⚠️ ') + app.label + '：' + app.msg
+          : '⚠️ 未能取得适用性判定。';
+        return '📊 **当前雷诺数分析**\n\n收敛后 Re = **' + this.formatShort(Re) + '**' +
+          (app && app.Re0 !== undefined ? '\n斯托克斯初估 Re₀ = **' + this.formatShort(app.Re0) + '**' : '') +
+          '\n' + regime + '\n\n当前阻力模型：' + (app && app.formula ? app.formula : '—');
       }
       if (type === 'parameter_effect') {
         if (/半径|r|R/.test(lower) && /增大|增加|变大|一倍/.test(lower)) {
@@ -9690,18 +11080,22 @@ var AIAssistant = {
     var text = '';
     if (ctx.expName === '斯托克斯定律' && st.terminalVelocity !== undefined) {
       var vt = st.terminalVelocity;
+      var rCur = (ctx.params.ballRadius || 0.001) * 1000;   // mm
+      var muCur = ctx.params.viscosity || 1.0;              // Pa·s
+      // vt ∝ R²，以当前半径为基准按平方缩放
+      var kf = function (rmm) { return Math.pow(rmm / rCur, 2); };
       text = '📊 **参数影响可视化 — 斯托克斯定律**\n\n' +
-        '公式：vt = 2R²g(ρs - ρf) / 9η\n\n' +
-        '━━━ 半径 R 的影响（η固定）━━━\n' +
-        'R = 0.5mm → vt = ' + this.formatShort(vt * 0.25 / 4) + ' m/s\n' +
-        'R = 1.0mm → vt = ' + this.formatShort(vt * 1 / 4) + ' m/s\n' +
-        'R = 2.0mm → vt = ' + this.formatShort(vt) + ' m/s ← 当前\n' +
-        'R = 3.0mm → vt = ' + this.formatShort(vt * 9 / 4) + ' m/s\n\n' +
-        '━━━ 粘度 η 的影响（R固定）━━━\n' +
-        'η = 0.5 Pa·s → vt = ' + this.formatShort(vt * 2) + ' m/s\n' +
-        'η = 1.0 Pa·s → vt = ' + this.formatShort(vt) + ' m/s ← 当前\n' +
-        'η = 2.0 Pa·s → vt = ' + this.formatShort(vt / 2) + ' m/s\n' +
-        'η = 3.0 Pa·s → vt = ' + this.formatShort(vt / 3) + ' m/s';
+        '公式：vt = 2r²g(ρs - ρf) / 9μ\n\n' +
+        '━━━ 半径 r 的影响（μ 固定）━━━\n' +
+        'r = ' + (rCur * 0.5).toFixed(2) + 'mm → vt = ' + this.formatShort(vt * kf(rCur * 0.5)) + ' m/s\n' +
+        'r = ' + rCur.toFixed(2) + 'mm → vt = ' + this.formatShort(vt) + ' m/s ← 当前\n' +
+        'r = ' + (rCur * 1.5).toFixed(2) + 'mm → vt = ' + this.formatShort(vt * kf(rCur * 1.5)) + ' m/s\n' +
+        'r = ' + (rCur * 2).toFixed(2) + 'mm → vt = ' + this.formatShort(vt * kf(rCur * 2)) + ' m/s\n\n' +
+        '━━━ 粘度 μ 的影响（r 固定）━━━\n' +
+        'μ = ' + (muCur * 0.5).toFixed(3) + ' Pa·s → vt = ' + this.formatShort(vt * muCur / (muCur * 0.5)) + ' m/s\n' +
+        'μ = ' + muCur.toFixed(3) + ' Pa·s → vt = ' + this.formatShort(vt) + ' m/s ← 当前\n' +
+        'μ = ' + (muCur * 2).toFixed(3) + ' Pa·s → vt = ' + this.formatShort(vt * muCur / (muCur * 2)) + ' m/s\n' +
+        'μ = ' + (muCur * 3).toFixed(3) + ' Pa·s → vt = ' + this.formatShort(vt * muCur / (muCur * 3)) + ' m/s';
     } else if (ctx.expName === '泊肃叶定律' && st.flowRate !== undefined) {
       text = '📊 **参数影响可视化 — 泊肃叶定律**\n\n' +
         '公式：Q = πR⁴ΔP / (8ηL)\n\n' +
@@ -9724,24 +11118,26 @@ var AIAssistant = {
     var text = '';
     if (ctx.expName === '斯托克斯定律' || ctx.expName === '斯托克斯定律实验') {
       text = '🔬 **流体对比演示 — 不同流体中的沉降**\n\n' +
-        '同一小球（R=2mm, ρs=7800kg/m³）在不同流体中：\n\n' +
-        '| 流体 | η (Pa·s) | ρ (kg/m³) | 终端速度 |\n' +
-        '|------|----------|-----------|----------|\n' +
-        '| 💧 水 | 0.001 | 1000 | ~59 mm/s |\n' +
-        '| 🫒 橄榄油 | 0.081 | 920 | ~0.74 mm/s |\n' +
-        '| 🍯 甘油 | 1.412 | 1260 | ~0.04 mm/s |\n' +
-        '| 🍯 蜂蜜 | 2.0 | 1400 | ~0.03 mm/s |\n\n' +
-        '💡 粘度越高，沉降越慢（反比关系）';
+        '同一小球（r=1mm，ρs=2500 kg/m³）在不同流体中：\n\n' +
+        '| 流体 | η (Pa·s) | ρ (kg/m³) | 终端速度 | Re | 适用分区 |\n' +
+        '|------|----------|-----------|----------|-----|----------|\n' +
+        '| 💧 水 | 0.001 | 1000 | ~3267 mm/s | 6533 | ❌ 牛顿阻力区 |\n' +
+        '| 🫒 橄榄油 | 0.081 | 920 | ~42.5 mm/s | 0.97 | ⚠️ Oseen 修正区 |\n' +
+        '| 🍯 甘油 | 1.0 | 1000 | ~3.27 mm/s | 0.007 | ✅ 斯托克斯区 |\n' +
+        '| 🍯 蜂蜜 | 2.0 | 1400 | ~1.20 mm/s | 0.002 | ✅ 斯托克斯区 |\n\n' +
+        '💡 粘度越高，沉降越慢（斯托克斯区内速度与 η 成反比）；\n' +
+        '⚠️ 但黏度太低（如水）时雷诺数高达数千，小球尾流已是湍流，\n' +
+        '斯托克斯公式 F = 6πμrv 不再适用 —— 这就是落球法实验必须用甘油的真正原因。';
     } else if (ctx.expName === '泊肃叶定律') {
       text = '🔬 **管径对比演示 — 相同压差下的流量差异**\n\n' +
-        '同一条件（ΔP=100Pa, η=2mPa·s, L=1m）不同管径：\n\n' +
-        '| 管径 | 半径 R | 流量 Q |\n' +
-        '|------|--------|--------|\n' +
-        '| 🔴 细管 | 1.0mm | ~0.04 mL/s |\n' +
-        '| 🟡 中管 | 2.0mm | ~0.66 mL/s |\n' +
-        '| 🟢 粗管 | 3.0mm | ~3.3 mL/s |\n' +
-        '| 🔵 特粗管 | 5.0mm | ~25.0 mL/s |\n\n' +
-        '💡 半径从1mm增到5mm（5倍），流量增大625倍（5⁴）！';
+        '同一条件（ΔP=1000Pa, η=0.001Pa·s, L=1m）不同管径：\n\n' +
+        '| 管径 | 半径 R | 流量 Q | 相对倍数 |\n' +
+        '|------|--------|--------|----------|\n' +
+        '| 🔴 细管 | 1.0mm | ~0.393 mL/s | 1× |\n' +
+        '| 🟡 中管 | 2.0mm | ~6.283 mL/s | 16× |\n' +
+        '| 🟢 粗管 | 3.0mm | ~31.8 mL/s | 81× |\n' +
+        '| 🔵 特粗管 | 5.0mm | ~245.4 mL/s | 625× |\n\n' +
+        '💡 半径从1mm增到5mm（5倍），流量增大625倍（5⁴），这就是泊肃叶定律中 R⁴ 的威力。';
     } else {
       text = '🔬 **对比演示**\n\n请先在斯托克斯定律或泊肃叶定律实验中启动模拟，然后询问"对比水和蜂蜜"或"对比不同管径"。';
     }
@@ -9971,25 +11367,30 @@ var AIAssistant = {
       try {
         var st = ctx.simulationState;
         if (exp === 'stokes') {
-          var R = (ctx.params.ballRadius || 2) / 1000;
-          var eta = ctx.params.viscosity || 1;
-          var rhos = 7800, rhof = ctx.params.fluidDensity || 1000, g = 9.8;
-          st.terminalVelocity = (2 * R * R * (rhos - rhof) * g) / (9 * eta);
-          st.reynoldsNumber = (rhof * 2 * R * st.terminalVelocity) / eta;
+          var R = (ctx.params.ballRadius || 0.001);   // m
+          var eta = ctx.params.viscosity || 1;        // Pa·s
+          var rhos = ctx.params.ballDensity || 2500, rhof = ctx.params.fluidDensity || 1000, g = 9.8;
+          var stokesPhysics = PhysicsEngine.stokes(R, rhos, rhof, eta, g);
+          st.terminalVelocity = stokesPhysics.vt;
+          st.reynoldsNumber = stokesPhysics.Re;
+          st.stokesApplicability = checkStokesApplicability(R, rhos, rhof, eta, g);
           st.timeConstant = (2 * rhos * R * R) / (9 * eta);
         } else if (exp === 'newton') {
-          var v = ctx.params.velocity || 2, gap = ctx.params.gap || 1;
-          var viscN = ctx.params.viscosity || 1, area = ctx.params.area || 1;
-          st.velocityGradient = v / gap;
-          st.shearStress = (viscN * v / gap).toExponential(3);
-          st.frictionForce = (viscN * area * v / gap).toFixed(2);
+          var v = ctx.params.velocity || 1, gap = ctx.params.distance || 2;
+          var viscN = ctx.params.viscosity || 0.005, area = ctx.params.area || 0.1;
+          var gap_m = gap / 1000;   // mm → m
+          st.velocityGradient = v / gap_m;
+          st.shearStress = (viscN * v / gap_m).toExponential(3);
+          st.frictionForce = (viscN * area * v / gap_m).toFixed(2);
         } else if (exp === 'poiseuille') {
-          var Rp = (ctx.params.pipeRadius || 2.5) / 1000;
-          var dP = ctx.params.pressure || 100, Lp = ctx.params.pipeLength || 1;
-          var etap = (ctx.params.viscosity || 2) / 1000;
+          var Rp = (ctx.params.radius || 0.001);        // m
+          var dP = ctx.params.pressure || 1000;         // Pa
+          var Lp = ctx.params.length || 1;              // m
+          var etap = ctx.params.viscosity || 0.001;     // Pa·s
+          var rhoP = ctx.params.density || 1000;        // kg/m³
           st.flowRate = (Math.PI * Math.pow(Rp, 4) * dP) / (8 * etap * Lp);
           st.maxVelocity = (dP * Rp * Rp) / (4 * etap * Lp);
-          st.reynoldsNumber = (1000 * st.maxVelocity / 2 * 2 * Rp) / etap;
+          st.reynoldsNumber = (rhoP * (st.maxVelocity / 2) * 2 * Rp) / etap;
         }
       } catch(e) {}
     }
@@ -10058,23 +11459,25 @@ var AIAssistant = {
             stokes: null
         };
         
-        // 物理参数
+        // 物理参数（与 2D 主页面 EXPERIMENTS[...].params 的默认值保持一致，统一 SI 单位）
         const physics = {
             newton: {
-                viscosity: 1,
-                velocity: 2,
-                gap: 1,
-                area: 1
+                viscosity: 0.005,   // Pa·s
+                velocity: 1.0,      // m/s
+                gap: 2,             // mm（板间距）
+                area: 0.1           // m²
             },
             poiseuille: {
-                radius: 2.5,
-                pressure: 100,
-                viscosity: 2,
-                length: 1
+                radius: 1.0,        // mm
+                pressure: 1000,     // Pa
+                viscosity: 0.001,   // Pa·s
+                length: 1           // m
             },
             stokes: {
-                radius: 2,       // mm
-                viscosity: 1,    // Pa·s
+                radius: 1.0,        // mm
+                ballDensity: 2500,  // kg/m³（小球密度）
+                fluidDensity: 1000, // kg/m³（流体密度）
+                viscosity: 1.0,     // Pa·s
                 omega: 1000,
                 mode: 'gravity'
             }
@@ -10385,7 +11788,6 @@ var AIAssistant = {
                     metalness: 0.1,
                     roughness: 0.2,
                     transmission: 0.4,
-                    thickness: 0.5,
                     ior: 1.33,
                     side: THREE.DoubleSide
                 });
@@ -10398,11 +11800,11 @@ var AIAssistant = {
                 group.add(layer);
             }
             
-            // 创建速度梯度箭头（表示各层位置处的速度梯度大小）
+            // 创建各层局部速度箭头（箭头长度随高度线性增加）
             const arrows = [];
             for (let i = 0; i < numLayers; i++) {
                 const y = -0.4 + i * layerHeight + layerHeight / 2;
-                // 速度梯度大小随高度增加（从底板到顶板梯度效应累积）
+                // Couette 流中局部速度随高度线性增加；速度梯度本身为常量
                 const baseGradient = physics.newton.velocity / physics.newton.gap;
                 // 使用tanh软饱和：梯度越大整体箭头越长，但始终保持从短到长的渐变比例
                 const ratio = i / (numLayers - 1);
@@ -10450,7 +11852,7 @@ var AIAssistant = {
                 });
                 const spring = new THREE.Mesh(springGeo, springMat);
                 spring.position.set(2.5, 0, 1.5);
-                spring.userData = { index: i };
+                spring.userData = { index: i, baseY: baseY };
                 frictionIndicators.push(spring);
                 group.add(spring);
             }
@@ -10460,6 +11862,7 @@ var AIAssistant = {
             const particleGeo = new THREE.SphereGeometry(0.04, 12, 12);
             // 初始粒子数量，会根据板间距动态调整
             const baseParticleCount = 120;
+            const initialAreaScale = Math.sqrt(physics.newton.area / 0.1);
             for (let i = 0; i < baseParticleCount; i++) {
                 const hue = Math.random() * 0.15 + 0.08;
                 const particleColor = new THREE.Color().setHSL(hue, 0.9, 0.6);
@@ -10471,13 +11874,14 @@ var AIAssistant = {
                     emissiveIntensity: 0.3
                 });
                 const particle = new THREE.Mesh(particleGeo, particleMat);
-                particle.position.set(
-                    (Math.random() - 0.5) * 5 * Math.sqrt(physics.newton.area),
-                    0, // Y坐标会在updateNewtonScene中动态设置
-                    (Math.random() - 0.5) * 3 * Math.sqrt(physics.newton.area)
-                );
+                // 使用相对于板面的归一化坐标，面积变化时粒子可同步铺满新板面。
+                const surfaceU = Math.random() * 2 - 1;
+                const surfaceV = Math.random() * 2 - 1;
+                particle.position.set(surfaceU * 2.65 * initialAreaScale, 0, surfaceV * 1.65 * initialAreaScale);
                 particle.userData = {
                     baseX: particle.position.x,
+                    surfaceU: surfaceU,
+                    surfaceV: surfaceV,
                     speed: Math.random() * 0.02 + 0.01,
                     layerRatio: Math.random(), // 使用比例而非固定层索引
                     active: true,
@@ -10517,11 +11921,13 @@ var AIAssistant = {
             
             sceneObjects.newton = {
                 group: group,
+                bottomPlate: bottomPlate,
                 topPlate: topPlate,
                 fluidLayers: fluidLayers,
                 arrows: arrows,
                 frictionIndicators: frictionIndicators,
-                flowParticles: flowParticles
+                flowParticles: flowParticles,
+                lastAreaScale: initialAreaScale
             };
             
             scene.add(group);
@@ -10531,18 +11937,38 @@ var AIAssistant = {
         function updateNewtonScene() {
             if (!sceneObjects.newton) return;
             
-            const { topPlate, fluidLayers, arrows, frictionIndicators, flowParticles } = sceneObjects.newton;
+            const { bottomPlate, topPlate, fluidLayers, arrows, frictionIndicators, flowParticles } = sceneObjects.newton;
             const { velocity, gap, viscosity, area } = physics.newton;
-            
+
+            // 物理量（统一 SI）：gap 滑块单位是 mm，物理计算换算成 m；
+            // 视觉效果沿用 mm 值（2mm 视觉高度与原 1m 位置观感一致，便于观察）
+            const gap_m = gap / 1000;
+            const gapVisual = gap;
+
             // 更新顶板位置和面积（面积通过XZ缩放实现）
-            topPlate.position.y = -0.5 + gap;
-            const areaScale = Math.sqrt(area); // 面积比 → 线性缩放比
+            topPlate.position.y = -0.5 + gapVisual;
+            const areaScale = Math.sqrt(area / 0.1); // 以默认面积 0.1 m² 为基准 → 线性缩放比
             topPlate.scale.x = areaScale;
             topPlate.scale.z = areaScale;
+            bottomPlate.scale.x = areaScale;
+            bottomPlate.scale.z = areaScale;
+
+            // 面积跨度达到 50 倍，需要同步调整观察距离，避免大板面被裁切、小板面缩成一点。
+            // 只在面积实际改变时取景，保留用户日常旋转/缩放后的视角。
+            if (Math.abs(areaScale - sceneObjects.newton.lastAreaScale) > 0.0001) {
+                const viewDirection = camera.position.clone().sub(controls.target).normalize();
+                const baseDistance = Math.sqrt(8 * 8 + 5 * 5 + 10 * 10);
+                const framingFactor = Math.min(1.55, Math.max(0.55, 0.35 + 0.65 * areaScale));
+                const desiredDistance = baseDistance * framingFactor;
+                controls.maxDistance = Math.max(20, desiredDistance * 1.2);
+                camera.position.copy(controls.target).add(viewDirection.multiplyScalar(desiredDistance));
+                controls.update();
+                sceneObjects.newton.lastAreaScale = areaScale;
+            }
             
             // 更新流体层
             const numLayers = fluidLayers.length;
-            const layerHeight = gap / numLayers;
+            const layerHeight = gapVisual / numLayers;
             
             fluidLayers.forEach((layer, i) => {
                 const y = -0.39 + i * layerHeight;  // 从底板上方开始
@@ -10574,17 +12000,20 @@ var AIAssistant = {
                 layer.material.color.setHSL(hue, saturation, lightness);
             });
             
-            // 更新速度梯度箭头
+            // 更新各层局部速度箭头；横向位置跟随板面尺寸
             arrows.forEach((arrow, i) => {
                 const y = -0.4 + i * layerHeight + layerHeight / 2;
-                // 速度梯度大小随高度增加（从底板到顶板梯度效应累积）
-                const baseGradient = velocity / gap;
+                // Couette 流中局部速度随高度增加；梯度值用于控制整体量级
+                // 用视觉板间距归一化，保证不同 z 下箭头长度差异方向正确且量级可控
+                const baseGradient = velocity / gapVisual;
                 // 使用tanh软饱和：梯度越大整体箭头越长，但始终保持从短到长的渐变比例
                 const ratio = i / (numLayers - 1);
                 const maxLen = Math.tanh(baseGradient * 0.4) * 1.8;
                 const minLen = 0.15; // 最小基准长度，确保底层箭头可见
                 const arrowLength = maxLen <= minLen ? maxLen : minLen + ratio * (maxLen - minLen);
                 arrow.position.y = y;
+                arrow.position.x = -2.5 * areaScale;
+                arrow.position.z = 1.9 * areaScale;
                 arrow.setLength(Math.max(0.1, arrowLength), 0.15, 0.1);
                 arrow.userData.gradient = baseGradient;
             });
@@ -10592,38 +12021,47 @@ var AIAssistant = {
             // 更新内摩擦力指示器
             frictionIndicators.forEach((indicator, i) => {
                 const y = -0.4 + (i - 0.5) * layerHeight;
-                indicator.position.y = y + 1.5;
+                indicator.position.set(
+                    2.5 * areaScale,
+                    y - indicator.userData.baseY,
+                    1.5 * areaScale
+                );
                 
-                // 根据粘度调整大小
-                const scale = 0.5 + viscosity * 0.1;
+                // 根据粘度调整大小（η 跨 4 个数量级，取对数映射到 0.5~2.0 倍）
+                const viscNorm = Math.min(1, Math.max(0, (Math.log10(viscosity) + 3.3) / 3.6));
+                const scale = 0.5 + viscNorm * 1.2;
                 indicator.scale.set(scale, scale, scale);
             });
             
             // 动态更新流动粒子的位置分布，约束在液体区域内
             const bottomY = -0.4;
-            const topY = -0.4 + gap;
-            const particleHalfX = 2.5 * areaScale;
-            const particleHalfZ = 1.5 * areaScale;
+            const topY = -0.4 + gapVisual;
+            // 与 5.5×3.5 的流体层同步，保留少量内边距，始终位于 6×4 上板覆盖范围内。
+            const particleHalfX = 2.65 * areaScale;
+            const particleHalfZ = 1.65 * areaScale;
             flowParticles.forEach(particle => {
                 // 根据layerRatio计算新的Y坐标，使其分布在整个板间距空间
-                particle.position.y = bottomY + particle.userData.layerRatio * gap;
-                // 约束XZ坐标在液体范围内
-                if (Math.abs(particle.position.x) > particleHalfX) {
-                    particle.position.x = (Math.random() - 0.5) * 2 * particleHalfX;
-                }
-                if (Math.abs(particle.position.z) > particleHalfZ) {
-                    particle.position.z = (Math.random() - 0.5) * 2 * particleHalfZ;
-                }
+                particle.position.y = bottomY + particle.userData.layerRatio * gapVisual;
+                particle.position.x = particle.userData.surfaceU * particleHalfX;
+                particle.position.z = particle.userData.surfaceV * particleHalfZ;
+                particle.userData.trailPositions.length = 0;
+                particle.userData.tailLine.visible = false;
             });
             
-            // 更新显示数据
-            const gradient = velocity / gap;
+            // 更新显示数据（物理量统一 SI：板间距 mm → m）
+            const gradient = velocity / gap_m;
             const stress = viscosity * gradient;
             const force = stress * area; // F = τ × A
             
             document.getElementById('newton-gradient').textContent = gradient.toFixed(2);
             document.getElementById('newton-stress').textContent = stress.toFixed(2);
             document.getElementById('newton-force').textContent = force.toFixed(2);
+
+            // 适用性提示：板间距过大时速度梯度过小、力的量级偏低
+            try {
+                const apNw = checkNewtonApplicability(velocity, viscosity, gap, area);
+                mountApplicabilityBanner('newton-applicability', apNw);
+            } catch (eApNw) { /* 提示失败不影响主流程 */ }
         }
         
         // ============================================
@@ -10634,8 +12072,8 @@ var AIAssistant = {
             group.name = 'poiseuille-scene';
             
             // 创建透明管道 - 横向放置
-            // 视觉半径：最小值0.5mm对应R_visual=0.06，最大值5mm对应0.24
-            const R_visual = 0.06 + (physics.poiseuille.radius - 0.5) * (0.18 / 4.5);
+            // 视觉半径：0.2mm → R_visual=0.05，5mm → 0.24（线性映射，与滑块量程一致）
+            const R_visual = 0.05 + (physics.poiseuille.radius - 0.2) * (0.19 / 4.8);
             // 视觉管道长度随参数变化：L=0.1m->0.5, L=1m->2.0, L=2m->4.0
             const L_param = physics.poiseuille.length;
             const pipeLength = 0.5 + (L_param - 0.1) * (3.5 / 1.9); // 0.5~4.0 线性映射
@@ -10649,7 +12087,6 @@ var AIAssistant = {
                 metalness: 0.1,
                 roughness: 0.05,
                 transmission: 0.8,
-                thickness: 0.2,
                 ior: 1.5,
                 side: THREE.DoubleSide
             });
@@ -10717,7 +12154,7 @@ var AIAssistant = {
             const R_init = physics.poiseuille.radius / 1000;
             const L_init = physics.poiseuille.length;
             const dP_init = physics.poiseuille.pressure;
-            const eta_init = physics.poiseuille.viscosity / 1000;
+            const eta_init = physics.poiseuille.viscosity;  // Pa·s（面板已统一为 SI）
             const vMax_init = (dP_init * Math.pow(R_init, 2)) / (4 * eta_init * L_init);
             const vAvg_init = vMax_init / 2;
             const Re_init = (1000 * vAvg_init * 2 * R_init) / eta_init;
@@ -10775,14 +12212,14 @@ var AIAssistant = {
             const { outerPipe, inlet, outlet, fluidLayers, particles, inletLabel, outletLabel, particleGeo, group, maxParticles } = sceneObjects.poiseuille;
             const { radius, pressure, viscosity, length } = physics.poiseuille;
 
-            // 视觉半径：最小值0.5mm对应R_visual=0.06，最大值5mm对应0.24
-            const R_visual = 0.06 + (radius - 0.5) * (0.18 / 4.5);
+            // 视觉半径：0.2mm → R_visual=0.05，5mm → 0.24（线性映射，与滑块量程一致）
+            const R_visual = 0.05 + (radius - 0.2) * (0.19 / 4.8);
             // 视觉管道长度随参数变化：L=0.1m->0.5, L=1m->2.0, L=2m->4.0
             const L_visual = 0.5 + (length - 0.1) * (3.5 / 1.9); // 0.5~4.0 线性映射
             const L = length;        // 物理计算使用真实长度（单位：m）
-            const R = radius / 1000; // 物理计算使用真实半径（单位：m）
-            const dP = pressure;
-            const eta = viscosity / 1000;  // mPa·s 转 Pa·s
+            const R = radius / 1000; // 物理计算使用真实半径（mm → m）
+            const dP = pressure;     // Pa
+            const eta = viscosity;   // Pa·s（面板已统一为 SI，无需换算）
 
             // 获取之前的管道长度（用于判断是伸长还是缩短）
             // 使用 userData 存储上一次的管道长度，因为 geometry.parameters 可能不可用
@@ -10922,8 +12359,12 @@ var AIAssistant = {
             
             // 注意：userData.lastLength 只在滑块事件中更新，避免竞争条件
             
-            // 计算雷诺数
-            const rho = 1000;
+            // 计算雷诺数（密度取用户实际设置的「流体密度 ρ」，不要硬编码）
+            let rho = 1000;
+            try {
+                const _pv = getParamValues();
+                if (_pv && isFinite(_pv.density) && _pv.density > 0) rho = _pv.density;
+            } catch (eRho) { /* 取不到参数时退回水的密度 */ }
             const Re = (rho * vAvg * 2 * R) / eta;
             
             // 更新显示
@@ -10966,6 +12407,13 @@ var AIAssistant = {
             } else if (warningEl) {
                 warningEl.remove();
             }
+
+            // 适用性横幅：层流判据（泊肃叶公式仅在层流下成立）
+            try {
+                const apPq = checkPoiseuilleApplicability(R, L, dP, eta, rho);
+                if (!apPq.ok && Re >= 2000) apPq.level = 'warn';
+                mountApplicabilityBanner('poiseuille-applicability', apPq);
+            } catch (eApPq) { /* 提示失败不影响主流程 */ }
         }
         
         // ============================================
@@ -11012,7 +12460,7 @@ var AIAssistant = {
             
             // 小球
             const ballRadius = physics.stokes.radius / 1000; // mm -> m
-            const ballGeo = new THREE.SphereGeometry(ballRadius * 80, 32, 32); // 放大80倍显示
+            const ballGeo = new THREE.SphereGeometry(ballRadius * 120, 32, 32); // 放大120倍显示（r=1mm → 0.12）
             const ballMat = new THREE.MeshPhysicalMaterial({
                 color: 0x00aaff,  // 初始蓝色（静止）
                 metalness: 0.7,
@@ -11187,8 +12635,9 @@ var AIAssistant = {
             
             const R = radius / 1000; // mm -> m
             const eta = viscosity;   // Pa·s（直接使用）
-            const rho_s = 7800;      // kg/m³（钢球密度，固定）
-            const rho_f = 1000;      // kg/m³（水密度，固定）
+            // 密度从面板读取，与 2D 实验参数保持同一套值（不再硬编码钢球/水）
+            const rho_s = (physics.stokes.ballDensity !== undefined) ? physics.stokes.ballDensity : 2500;   // kg/m³
+            const rho_f = (physics.stokes.fluidDensity !== undefined) ? physics.stokes.fluidDensity : 1000; // kg/m³
             const g = 9.8;           // m/s²（固定）
             
             // 计算力
@@ -11234,8 +12683,8 @@ var AIAssistant = {
               Re = (rho_f * 2 * R * vTerminal) / eta;
             }
             
-            // 更新小球大小 - 放大50倍便于观察
-            const ballVisualRadius = R * 80;
+            // 更新小球大小 - 放大120倍便于观察（与 initStokesScene 保持一致）
+            const ballVisualRadius = R * 120;
             st.ball.geometry.dispose();
             st.ball.geometry = new THREE.SphereGeometry(ballVisualRadius, 32, 32);
             
@@ -11323,10 +12772,18 @@ var AIAssistant = {
                 document.getElementById('stokes-reynolds').textContent = Re.toFixed(2);
             }
             
-            // 雷诺数检测和警示
+            // 适用性判定统一复用主页面的四分区物理核心，避免 3D、AI、报告使用不同阈值。
+            let stokesApplicability = null;
+            try {
+                stokesApplicability = checkStokesApplicability(R, rho_s, rho_f, eta, g);
+                mountApplicabilityBanner('stokes-applicability', stokesApplicability);
+            } catch (eAp) { /* 提示失败不影响主流程 */ }
+
+            // 雷诺数警告与适用性横幅使用同一结论；Re < 0.1 才是纯斯托克斯公式严格适用区。
             const warningEl = document.getElementById('stokes-warning');
             if (warningEl) {
-                if (Re > 1) {
+                if (stokesApplicability && !stokesApplicability.ok) {
+                    warningEl.textContent = '⚠️ 当前处于' + stokesApplicability.label + '：纯斯托克斯公式不适用，请查看下方模型适用范围说明。';
                     warningEl.style.display = 'block';
                 } else {
                     warningEl.style.display = 'none';
@@ -11491,14 +12948,15 @@ var AIAssistant = {
                 const { fluidLayers, flowParticles, frictionIndicators, arrows } = sceneObjects.newton;
                 const { velocity, gap, viscosity, area } = physics.newton;
                 
-                // 粘滞系数影响：高粘度时流动更困难，层间摩擦更明显
-                const viscosityFactor = 1 / (1 + viscosity * 0.3); // 粘度越高，流动越慢
-                const frictionIntensity = viscosity * 0.1; // 粘度越高，摩擦指示器越明显
-                const areaScale = Math.sqrt(area);
+                // 上板速度是给定边界条件：稳态 Couette 速度剖面不随黏度改变；
+                // 黏度只改变剪切应力和维持运动所需的力。
+                // 必须与顶板 updateNewtonScene() 使用同一基准，否则粒子云会比板面缩小 √10 倍。
+                const areaScale = Math.sqrt(area / 0.1);
+                const viscosityVisual = Math.min(1, Math.max(0, (Math.log10(viscosity) + 3.3) / 3.6));
                 
-                // 流体层剪切流动效果 - 受粘度影响
+                // 流体层展示线性速度剖面
                 fluidLayers.forEach((layer, i) => {
-                    const layerVelocity = (i / (fluidLayers.length - 1)) * velocity * viscosityFactor;
+                    const layerVelocity = (i / (fluidLayers.length - 1)) * velocity;
                     const offset = Math.sin(time * 3 + i * 0.3) * 0.05 * layerVelocity;
                     layer.position.z = offset;
                     
@@ -11527,10 +12985,10 @@ var AIAssistant = {
                     layer.material.color.setHSL(hue, saturation, lightness);
                 });
                 
-                // 速度梯度箭头随参数变化 - 呈现从短到长的渐变效果
+                // 各层局部速度箭头随参数变化，呈现线性速度剖面
                 arrows.forEach((arrow, i) => {
                     const y = -0.4 + i * (gap / 12) + (gap / 12) / 2;
-                    // 速度梯度大小随高度增加（从底板到顶板梯度效应累积）
+                    // 局部速度随高度增加，梯度值控制整组箭头的量级
                     const baseGradient = velocity / gap;
                     // 使用tanh软饱和：梯度越大整体箭头越长，但始终保持从短到长的渐变比例
                     const ratio = i / 11;
@@ -11538,6 +12996,8 @@ var AIAssistant = {
                     const minLen = 0.15; // 最小基准长度，确保底层箭头可见
                     const arrowLength = maxLen <= minLen ? maxLen : minLen + ratio * (maxLen - minLen);
                     arrow.position.y = y;
+                    arrow.position.x = -2.5 * areaScale;
+                    arrow.position.z = 1.9 * areaScale;
                     arrow.setLength(Math.max(0.05, arrowLength), 0.15, 0.1);
                     // 箭头保持绿色
                     arrow.setColor(new THREE.Color(0x00ff88));
@@ -11545,20 +13005,24 @@ var AIAssistant = {
                 
                 // 内摩擦力指示器随粘度变化
                 frictionIndicators.forEach((indicator, i) => {
-                    const y = -0.4 + (i - 0.5) * (gap / 10);
-                    indicator.position.y = y + 1.5;
-                    // 粘度越高，弹簧越密集（缩放越小）
-                    const scale = 0.5 + (11 - viscosity) * 0.05;
-                    indicator.scale.set(Math.max(0.3, scale), Math.max(0.3, scale), Math.max(0.3, scale));
-                    // 高粘度时弹簧变红
-                    const springHue = viscosity > 3 ? 0.0 : 0.1;
+                    const y = -0.4 + (i - 0.5) * (gap / fluidLayers.length);
+                    indicator.position.set(
+                        2.5 * areaScale,
+                        y - indicator.userData.baseY,
+                        1.5 * areaScale
+                    );
+                    // 与静态更新保持一致，避免开始动画时弹簧尺寸突跳
+                    const scale = 0.5 + viscosityVisual * 1.2;
+                    indicator.scale.set(scale, scale, scale);
+                    // 黏度越高，颜色由橙色平滑过渡到红色
+                    const springHue = 0.1 * (1 - viscosityVisual);
                     indicator.material.color.setHSL(springHue, 1.0, 0.5);
                 });
                 
-                // 流动粒子动画 - 受粘度显著影响
+                // 流动粒子动画：速度由边界条件决定，颜色与尾迹仅作为黏度提示
                 const bottomY = -0.4;
-                const halfX = 2.5 * areaScale; // 液体X方向半宽
-                const halfZ = 1.5 * areaScale; // 液体Z方向半宽
+                const halfX = 2.65 * areaScale; // 与流体层/上板统一的X方向半宽
+                const halfZ = 1.65 * areaScale; // 与流体层/上板统一的Z方向半宽
                 flowParticles.forEach(particle => {
                     particle.visible = true;
                     const layerRatio = particle.userData.layerRatio;
@@ -11580,8 +13044,7 @@ var AIAssistant = {
                     // 更新蝌蚪尾巴Line
                     const tailLine = particle.userData.tailLine;
                     const tailGeo = particle.userData.tailGeo;
-                    const viscosityFactor = Math.max(0, (viscosity - 0.1) / (10 - 0.1));
-                    const maxLen = Math.floor(5 + viscosityFactor * 10);  // 5-15个点，更长
+                    const maxLen = Math.floor(5 + viscosityVisual * 10);
                     const len = Math.min(trailPositions.length, maxLen);
                     
                     if (len >= 2) {
@@ -11622,14 +13085,13 @@ var AIAssistant = {
                     
                     // 粒子颜色随粘度变化：低粘度亮绿，高粘度暗红
                     const speedRatio = flowSpeed / (particle.userData.speed * velocity * 0.5);
-                    const particleHue = viscosity > 5 ? 0.0 : 0.35 - viscosity * 0.05;
+                    const particleHue = 0.35 * (1 - viscosityVisual);
                     const particleLight = 0.3 + speedRatio * 0.4;
                     particle.material.color.setHSL(particleHue, 0.9, particleLight);
                     
-                    // 高粘度时粒子有滞后感（运动不流畅）
-                    const lagFactor = viscosity * 0.02;
+                    // 轻微扰动仅帮助观察层间运动，不改变平均速度剖面
                     const baseY = bottomY + layerRatio * gap;
-                    particle.position.y = baseY + Math.sin(time * (5 - lagFactor) + particle.position.x) * 0.02;
+                    particle.position.y = baseY + Math.sin(time * 5 + particle.position.x) * 0.02;
                 });
             } else if (currentScene === 'newton' && sceneObjects.newton && !animationStates.newton.running) {
                 // 停止时隐藏粒子
@@ -11641,14 +13103,14 @@ var AIAssistant = {
                 const { particles, fluidLayers, particleGeo, maxParticles, group } = sceneObjects.poiseuille;
                 const { radius, pressure, viscosity, length } = physics.poiseuille;
 
-                // 视觉半径：最小值0.5mm对应R_visual=0.06，最大值5mm对应0.24
-                const R_visual = 0.06 + (radius - 0.5) * (0.18 / 4.5);
+                // 视觉半径：0.2mm → R_visual=0.05，5mm → 0.24（线性映射，与滑块量程一致）
+                const R_visual = 0.05 + (radius - 0.2) * (0.19 / 4.8);
                 // 视觉管道长度随参数变化：L=0.1m->0.5, L=1m->2.0, L=2m->4.0
                 const L_visual = 0.5 + (length - 0.1) * (3.5 / 1.9);
                 const L = length;        // 物理计算使用真实长度（单位：m）
-                const R = radius / 1000; // 物理计算使用真实半径（单位：m）
-                const dP = pressure;
-                const eta = viscosity / 1000;  // mPa·s 转 Pa·s
+                const R = radius / 1000; // 物理计算使用真实半径（mm → m）
+                const dP = pressure;     // Pa
+                const eta = viscosity;   // Pa·s（面板已统一为 SI，无需换算）
                 const vMax = (dP * Math.pow(R, 2)) / (4 * eta * L);
 
                 // 获取当前雷诺数
@@ -11795,8 +13257,8 @@ var AIAssistant = {
                     const { radius, viscosity } = physics.stokes;
                     const R = radius / 1000; // mm -> m
                     const eta = viscosity;   // Pa·s
-                    const rho_s = 7800;      // kg/m³（钢球密度，固定）
-                    const rho_f = 1000;      // kg/m³（水密度，固定）
+                    const rho_s = (physics.stokes.ballDensity !== undefined) ? physics.stokes.ballDensity : 2500;   // kg/m³
+                    const rho_f = (physics.stokes.fluidDensity !== undefined) ? physics.stokes.fluidDensity : 1000; // kg/m³
                     const g = 9.8;
                     
                     const volume = (4 / 3) * Math.PI * Math.pow(R, 3);
@@ -12053,19 +13515,19 @@ var AIAssistant = {
             
             document.getElementById('newton-viscosity').addEventListener('input', (e) => {
                 physics.newton.viscosity = parseFloat(e.target.value);
-                document.getElementById('newton-viscosity-val').textContent = `${physics.newton.viscosity.toFixed(1)} Pa·s`;
+                document.getElementById('newton-viscosity-val').textContent = `${physics.newton.viscosity.toFixed(4)} Pa·s`;
                 updateNewtonScene();
             });
             
             document.getElementById('newton-velocity').addEventListener('input', (e) => {
                 physics.newton.velocity = parseFloat(e.target.value);
-                document.getElementById('newton-velocity-val').textContent = `${physics.newton.velocity.toFixed(1)} m/s`;
+                document.getElementById('newton-velocity-val').textContent = `${physics.newton.velocity.toFixed(2)} m/s`;
                 updateNewtonScene();
             });
             
             document.getElementById('newton-gap').addEventListener('input', (e) => {
                 physics.newton.gap = parseFloat(e.target.value);
-                document.getElementById('newton-gap-val').textContent = `${physics.newton.gap.toFixed(1)} m`;
+                document.getElementById('newton-gap-val').textContent = `${physics.newton.gap.toFixed(1)} mm`;
                 updateNewtonScene();
             });
             
@@ -12077,15 +13539,15 @@ var AIAssistant = {
             
             document.getElementById('newton-reset').addEventListener('click', () => {
                 animationStates.newton.running = false;
-                physics.newton = { viscosity: 1, velocity: 2, gap: 1, area: 1 };
-                document.getElementById('newton-viscosity').value = 1;
-                document.getElementById('newton-velocity').value = 2;
-                document.getElementById('newton-gap').value = 1;
-                document.getElementById('newton-area').value = 1;
-                document.getElementById('newton-viscosity-val').textContent = '1.0 Pa·s';
-                document.getElementById('newton-velocity-val').textContent = '2.0 m/s';
-                document.getElementById('newton-gap-val').textContent = '1.0 m';
-                document.getElementById('newton-area-val').textContent = '1.0 m²';
+                physics.newton = { viscosity: 0.005, velocity: 1.0, gap: 2, area: 0.1 };
+                document.getElementById('newton-viscosity').value = 0.005;
+                document.getElementById('newton-velocity').value = 1.0;
+                document.getElementById('newton-gap').value = 2;
+                document.getElementById('newton-area').value = 0.1;
+                document.getElementById('newton-viscosity-val').textContent = '0.0050 Pa·s';
+                document.getElementById('newton-velocity-val').textContent = '1.00 m/s';
+                document.getElementById('newton-gap-val').textContent = '2.0 mm';
+                document.getElementById('newton-area-val').textContent = '0.10 m²';
                 updateNewtonScene();
                 updateControlButtons();
             });
@@ -12115,7 +13577,7 @@ var AIAssistant = {
             
             document.getElementById('poiseuille-viscosity').addEventListener('input', (e) => {
                 physics.poiseuille.viscosity = parseFloat(e.target.value);
-                document.getElementById('poiseuille-viscosity-val').textContent = `${physics.poiseuille.viscosity.toFixed(1)} mPa·s`;
+                document.getElementById('poiseuille-viscosity-val').textContent = `${physics.poiseuille.viscosity.toFixed(4)} Pa·s`;
                 updatePoiseuilleScene();
             });
             
@@ -12130,21 +13592,21 @@ var AIAssistant = {
                 }
                 
                 physics.poiseuille.length = newLength;
-                document.getElementById('poiseuille-length-val').textContent = `${physics.poiseuille.length} m`;
+                document.getElementById('poiseuille-length-val').textContent = `${physics.poiseuille.length.toFixed(2)} m`;
                 updatePoiseuilleScene();
             });
             
             document.getElementById('poiseuille-reset').addEventListener('click', () => {
                 animationStates.poiseuille.running = false;
-                physics.poiseuille = { radius: 2.5, pressure: 100, viscosity: 2, length: 1 };
-                document.getElementById('poiseuille-radius').value = 2.5;
-                document.getElementById('poiseuille-pressure').value = 100;
-                document.getElementById('poiseuille-viscosity').value = 2;
+                physics.poiseuille = { radius: 1.0, pressure: 1000, viscosity: 0.001, length: 1 };
+                document.getElementById('poiseuille-radius').value = 1.0;
+                document.getElementById('poiseuille-pressure').value = 1000;
+                document.getElementById('poiseuille-viscosity').value = 0.001;
                 document.getElementById('poiseuille-length').value = 1;
-                document.getElementById('poiseuille-radius-val').textContent = '2.5 mm';
-                document.getElementById('poiseuille-pressure-val').textContent = '100 Pa';
-                document.getElementById('poiseuille-viscosity-val').textContent = '2.0 mPa·s';
-                document.getElementById('poiseuille-length-val').textContent = '1.0 m';
+                document.getElementById('poiseuille-radius-val').textContent = '1.0 mm';
+                document.getElementById('poiseuille-pressure-val').textContent = '1000 Pa';
+                document.getElementById('poiseuille-viscosity-val').textContent = '0.0010 Pa·s';
+                document.getElementById('poiseuille-length-val').textContent = '1.00 m';
                 
                 // 重置时恢复初始管道长度记录
                 if (sceneObjects.poiseuille && sceneObjects.poiseuille.outerPipe) {
@@ -12179,9 +13641,23 @@ var AIAssistant = {
                 updateStokesScene();
             });
             
+            document.getElementById('stokes-density').addEventListener('input', (e) => {
+                physics.stokes.ballDensity = parseFloat(e.target.value);
+                document.getElementById('stokes-density-val').textContent = `${physics.stokes.ballDensity.toFixed(0)} kg/m³`;
+                updateStokesScene();
+            });
+            
+            document.getElementById('stokes-fluid-density').addEventListener('input', (e) => {
+                physics.stokes.fluidDensity = parseFloat(e.target.value);
+                document.getElementById('stokes-fluid-density-val').textContent = `${physics.stokes.fluidDensity.toFixed(1)} kg/m³`;
+                updateStokesScene();
+            });
+            
             document.getElementById('stokes-viscosity').addEventListener('input', (e) => {
                 physics.stokes.viscosity = parseFloat(e.target.value);
-                document.getElementById('stokes-viscosity-val').textContent = `${physics.stokes.viscosity.toFixed(1)} Pa·s`;
+                document.getElementById('stokes-viscosity-val').textContent = physics.stokes.viscosity < 0.0001
+                    ? `${physics.stokes.viscosity.toExponential(2)} Pa·s`
+                    : `${physics.stokes.viscosity.toFixed(4)} Pa·s`;
                 updateStokesScene();
             });
             
@@ -12202,11 +13678,15 @@ var AIAssistant = {
                     sceneObjects.stokes.ball.position.y = 4.0;
                 }
                 
-                physics.stokes = { radius: 2.0, viscosity: 1.0, omega: 1000, mode: 'gravity' };
-                document.getElementById('stokes-radius').value = 2.0;
+                physics.stokes = { radius: 1.0, ballDensity: 2500, fluidDensity: 1000, viscosity: 1.0, omega: 1000, mode: 'gravity' };
+                document.getElementById('stokes-radius').value = 1.0;
+                document.getElementById('stokes-density').value = 2500;
+                document.getElementById('stokes-fluid-density').value = 1000;
                 document.getElementById('stokes-viscosity').value = 1.0;
-                document.getElementById('stokes-radius-val').textContent = '2.0 mm';
-                document.getElementById('stokes-viscosity-val').textContent = '1.0 Pa·s';
+                document.getElementById('stokes-radius-val').textContent = '1.0 mm';
+                document.getElementById('stokes-density-val').textContent = '2500 kg/m³';
+                document.getElementById('stokes-fluid-density-val').textContent = '1000.0 kg/m³';
+                document.getElementById('stokes-viscosity-val').textContent = '1.0000 Pa·s';
                 
                 updateStokesScene();
                 updateControlButtons();
